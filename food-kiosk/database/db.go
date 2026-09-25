@@ -20,7 +20,7 @@ func Open(path string) (*sql.DB, error) {
 	}
 
 	// Appropriate for a small single-kiosk application.
-	db.SetMaxOpenConns(1)
+	db.SetMaxOpenConns(1) // can change this in the future when we scale.
 
 	// Enable foreign-key constraints.
 	if _, err := db.Exec(`PRAGMA foreign_keys = ON;`); err != nil {
