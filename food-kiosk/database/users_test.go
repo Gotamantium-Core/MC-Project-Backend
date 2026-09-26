@@ -2,36 +2,13 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"errors"
-	"path/filepath"
 	"testing"
 )
 
-func openUserTestDB(t *testing.T) *sql.DB {
-	t.Helper()
-
-	db, err := Open(filepath.Join(t.TempDir(), "users.db"))
-	if err != nil {
-		t.Fatalf("open test database: %v", err)
-	}
-	if err := Initialize(db); err != nil {
-		db.Close()
-		t.Fatalf("initialize test database: %v", err)
-	}
-
-	t.Cleanup(func() {
-		if err := db.Close(); err != nil {
-			t.Errorf("close test database: %v", err)
-		}
-	})
-
-	return db
-}
-
 func TestCreateAndGetUser(t *testing.T) {
 	ctx := context.Background()
-	db := openUserTestDB(t)
+	db := openTestDB(t)
 
 	id, err := CreateUser(ctx, db, "TVE24CS001", "Asha Rao", "9876543210")
 	if err != nil {
@@ -68,7 +45,7 @@ func TestCreateAndGetUser(t *testing.T) {
 
 func TestGetUserWithNullPhone(t *testing.T) {
 	ctx := context.Background()
-	db := openUserTestDB(t)
+	db := openTestDB(t)
 
 	result, err := db.ExecContext(ctx, `INSERT INTO users (roll_no, name, phone) VALUES (?, ?, NULL)`, "TVE24CS002", "Ravi Kumar")
 	if err != nil {
@@ -90,7 +67,7 @@ func TestGetUserWithNullPhone(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 	ctx := context.Background()
-	db := openUserTestDB(t)
+	db := openTestDB(t)
 
 	id, err := CreateUser(ctx, db, "TVE24CS003", "Meera Shah", "")
 	if err != nil {
@@ -122,7 +99,7 @@ func TestUpdateUser(t *testing.T) {
 
 func TestUserErrors(t *testing.T) {
 	ctx := context.Background()
-	db := openUserTestDB(t)
+	db := openTestDB(t)
 
 	_, err := CreateUser(ctx, db, "TVE24CS005", "Karan Singh", "")
 	if err != nil {

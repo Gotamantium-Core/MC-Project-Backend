@@ -15,10 +15,8 @@ type User struct {
 	CreatedAt string
 }
 
-var ErrNotFound = errors.New("not found")
-
 // Create a new user and insert into the users table.
-func CreateUser(ctx context.Context, db *sql.DB, rollNo string, name string, phone string) (int64, error) {
+func CreateUser(ctx context.Context, db DB, rollNo string, name string, phone string) (int64, error) {
 	result, err := db.ExecContext(ctx, `INSERT INTO users (roll_no, name, phone) VALUES (?, ?, ?)`, rollNo, name, phone)
 	if err != nil {
 		return 0, fmt.Errorf("insert user: %w", err)
@@ -33,7 +31,7 @@ func CreateUser(ctx context.Context, db *sql.DB, rollNo string, name string, pho
 }
 
 // Search for a user by their ID
-func GetUserByID(ctx context.Context, db *sql.DB, id int64) (*User, error) {
+func GetUserByID(ctx context.Context, db DB, id int64) (*User, error) {
 	var user User
 	err := db.QueryRowContext(ctx, `SELECT id, roll_no, name, phone, created_at FROM users WHERE id = ?`, id).Scan(
 		&user.ID,
@@ -53,7 +51,7 @@ func GetUserByID(ctx context.Context, db *sql.DB, id int64) (*User, error) {
 }
 
 // Search for a user by their roll number (TVE__XX___)
-func GetUserByRollNo(ctx context.Context, db *sql.DB, rollNo string) (*User, error) {
+func GetUserByRollNo(ctx context.Context, db DB, rollNo string) (*User, error) {
 	var user User
 	err := db.QueryRowContext(ctx, `SELECT id, roll_no, name, phone, created_at FROM users WHERE roll_no = ?`, rollNo).Scan(
 		&user.ID,
@@ -74,7 +72,7 @@ func GetUserByRollNo(ctx context.Context, db *sql.DB, rollNo string) (*User, err
 
 // Updates user roll_no, name, and phone of a given user struct.
 // returns nil if successful
-func UpdateUser(ctx context.Context, db *sql.DB, user User) error {
+func UpdateUser(ctx context.Context, db DB, user User) error {
 	result, err := db.ExecContext(ctx, `UPDATE users SET roll_no = ?, name = ?, phone = ? WHERE id = ?`, user.RollNo, user.Name, user.Phone, user.ID)
 	if err != nil {
 		return fmt.Errorf("update user: %w", err)
@@ -92,7 +90,7 @@ func UpdateUser(ctx context.Context, db *sql.DB, user User) error {
 }
 
 // returns a list of all users in the users table
-func ListUsers(ctx context.Context, db *sql.DB) ([]User, error) {
+func ListUsers(ctx context.Context, db DB) ([]User, error) {
 	rows, err := db.QueryContext(ctx, `SELECT id, roll_no, name, phone, created_at FROM users ORDER BY id`)
 	if err != nil {
 		return nil, fmt.Errorf("list users: %w", err)
