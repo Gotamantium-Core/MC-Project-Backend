@@ -297,8 +297,10 @@ func TestMenuItemErrors(t *testing.T) {
 	if _, err := CreateMenuItem(ctx, db, "Vada", "VADA", 3000, 1); err != nil {
 		t.Fatalf("CreateMenuItem() error = %v", err)
 	}
-	if _, err := CreateMenuItem(ctx, db, "Other Vada", "VADA", 2500, 1); err == nil {
-		t.Fatal("CreateMenuItem() duplicate code error = nil")
+	// The code is how a customer orders, so a collision is a conflict the caller
+	// must be able to match with errors.Is rather than string-match a driver error.
+	if _, err := CreateMenuItem(ctx, db, "Other Vada", "VADA", 2500, 1); !errors.Is(err, ErrConflict) {
+		t.Fatalf("CreateMenuItem() duplicate code error = %v, want ErrConflict", err)
 	}
 
 	if _, err := GetMenuItemByID(ctx, db, 999); !errors.Is(err, ErrNotFound) {
@@ -315,5 +317,55 @@ func TestMenuItemErrors(t *testing.T) {
 	err = SetMenuItemAvailability(ctx, db, 999, 1)
 	if !errors.Is(err, ErrNotFound) {
 		t.Fatalf("SetMenuItemAvailability() error = %v, want ErrNotFound", err)
+	}
+}
+
+// TestUpdateMenuItemOntoTakenCodeIsConflict covers the UNIQUE path on update, so
+// a rename cannot quietly steal another item's ordering code.
+func TestUpdateMenuItemOntoTakenCodeIsConflict(t *testing.T) {
+	ctx := context.Background()
+	db := openTestDB(t)
+
+	if _, err := CreateMenuItem(ctx, db, "Vada", "VADA", 3000, 1); err != nil {
+		t.Fatalf("CreateMenuItem() error = %v", err)
+	}
+	chaiID, err := CreateMenuItem(ctx, db, "Masala Chai", "CHAI", 2000, 1)
+	if err != nil {
+		t.Fatalf("CreateMenuItem() error = %v", err)
+	}
+
+	err = UpdateMenuItem(ctx, db, Menu{ID: chaiID, ItemName: "Masala Chai", Code: "VADA", PricePaise: 2000, IsAvailable: 1})
+	if !errors.Is(err, ErrConflict) {
+		t.Fatalf("UpdateMenuItem() onto a taken code error = %v, want ErrConflict", err)
+	}
+
+	item, err := GetMenuItemByID(ctx, db, chaiID)
+	if err != nil {
+		t.Fatalf("GetMenuItemByID() error = %v", err)
+	}
+	if item.Code != "CHAI" {
+		t.Fatalf("code = %q, want CHAI (the rejected rename must not apply)", item.Code)
+	}
+}
+
+// TestDeleteOrderedMenuItemIsConflict asserts the RESTRICT refusal is a sentinel.
+// The order history is what makes the delete illegal, so "you cannot delete
+// this" is a 409, not an unexpected database failure.
+func TestDeleteOrderedMenuItemIsConflict(t *testing.T) {
+	ctx := context.Background()
+	db := openTestDB(t)
+
+	menuID := seedMenu(t, db, "Vada", "VADA", 3000)
+	userID := seedUser(t, db, "TVE24CS150", 10000)
+
+	if _, err := CreateOrder(ctx, db, userID, []OrderLine{{Code: "VADA", Quantity: 1}}); err != nil {
+		t.Fatalf("CreateOrder() error = %v", err)
+	}
+
+	if err := DeleteMenuItem(ctx, db, menuID); !errors.Is(err, ErrConflict) {
+		t.Fatalf("DeleteMenuItem() on an ordered item error = %v, want ErrConflict", err)
+	}
+	if _, err := GetMenuItemByID(ctx, db, menuID); err != nil {
+		t.Fatalf("the restricted item was removed anyway: %v", err)
 	}
 }

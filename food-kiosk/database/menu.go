@@ -64,7 +64,8 @@ func CreateMenuItem(ctx context.Context, db DB, itemName string, code string, pr
 
 	result, err := db.ExecContext(ctx, `INSERT INTO menu (item_name, code, price_paise, is_available) VALUES (?, ?, ?, ?)`, itemName, code, pricePaise, isAvailable)
 	if err != nil {
-		return 0, fmt.Errorf("insert menu item: %w", err)
+		// A duplicate code is a conflict: the code is how a customer orders.
+		return 0, fmt.Errorf("insert menu item: %w", asConflict(err))
 	}
 
 	id, err := result.LastInsertId()
@@ -160,7 +161,8 @@ func UpdateMenuItem(ctx context.Context, db DB, item Menu) error {
 
 	result, err := db.ExecContext(ctx, `UPDATE menu SET item_name = ?, code = ?, price_paise = ?, is_available = ? WHERE id = ?`, item.ItemName, item.Code, item.PricePaise, item.IsAvailable, item.ID)
 	if err != nil {
-		return fmt.Errorf("update menu item: %w", err)
+		// Renaming an item onto another item's code violates UNIQUE.
+		return fmt.Errorf("update menu item: %w", asConflict(err))
 	}
 
 	rowsAffected, err := result.RowsAffected()
@@ -200,14 +202,16 @@ func SetMenuItemAvailability(ctx context.Context, db DB, id int64, isAvailable i
 
 // DeleteMenuItem permanently removes a menu item.
 //
-// This fails with a foreign key error if the item appears in any order, because
-// order_items.menu_id has no ON DELETE action. That is deliberate: past orders
+// This fails with ErrConflict if the item appears in any order, because
+// order_items.menu_id is ON DELETE RESTRICT. That is deliberate: past orders
 // must keep pointing at the item they were priced from, so retire an item with
-// SetMenuItemAvailability instead of deleting it.
+// SetMenuItemAvailability instead of deleting it. Retiring is also reversible,
+// so an item can come back when it is in stock again.
 func DeleteMenuItem(ctx context.Context, db DB, id int64) error {
 	result, err := db.ExecContext(ctx, `DELETE FROM menu WHERE id = ?`, id)
 	if err != nil {
-		return fmt.Errorf("delete menu item: %w", err)
+		// The foreign key restriction is the expected rejection here.
+		return fmt.Errorf("delete menu item: %w", asConflict(err))
 	}
 
 	rowsAffected, err := result.RowsAffected()

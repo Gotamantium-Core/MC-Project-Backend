@@ -714,8 +714,8 @@ func TestDeleteOrderedMenuItemIsRestricted(t *testing.T) {
 		t.Fatalf("CreateOrder() error = %v", err)
 	}
 
-	if err := DeleteMenuItem(ctx, db, menuID); err == nil {
-		t.Fatal("deleting an ordered menu item succeeded; ON DELETE RESTRICT is not in effect")
+	if err := DeleteMenuItem(ctx, db, menuID); !errors.Is(err, ErrConflict) {
+		t.Fatalf("DeleteMenuItem() on an ordered item error = %v, want ErrConflict", err)
 	}
 
 	// Retiring it instead must work, and the historical order must survive.
@@ -735,6 +735,98 @@ func TestDeleteOrderedMenuItemIsRestricted(t *testing.T) {
 	}
 	if len(items) != 1 || items[0].MenuID != menuID {
 		t.Fatalf("order items = %+v, want the retired item to still be referenced", items)
+	}
+}
+
+// TestRetiredItemHidesButStaysOrderable documents the availability contract.
+//
+// SetMenuItemAvailability is a display flag, not an access control: it removes
+// the item from the customer-facing menu so the kiosk stops offering it, while
+// leaving the row intact so the item can be switched back on when it returns.
+// CreateOrder deliberately does NOT check is_available, because a code-entered
+// order is still priced and recorded normally; the flag exists to hide a sold-out
+// item from the screen, not to refuse a customer who already has the code.
+//
+// This is a decision, not an accident. If the kiosk should instead reject orders
+// for a retired item, GetMenuItemsByCodes needs to filter on is_available and
+// this test has to be inverted.
+func TestRetiredItemHidesButStaysOrderable(t *testing.T) {
+	ctx := context.Background()
+	db := openTestDB(t)
+
+	menuID := seedMenu(t, db, "Samosa", "SAM", 1500)
+	userID := seedUser(t, db, "TVE24CS151", 10000)
+
+	// Available: shown on the menu and orderable.
+	available, err := ListAvailableMenuItems(ctx, db)
+	if err != nil {
+		t.Fatalf("ListAvailableMenuItems() error = %v", err)
+	}
+	if len(available) != 1 {
+		t.Fatalf("ListAvailableMenuItems() length = %d, want 1", len(available))
+	}
+
+	if err := SetMenuItemAvailability(ctx, db, menuID, 0); err != nil {
+		t.Fatalf("SetMenuItemAvailability() error = %v", err)
+	}
+
+	// Retired: hidden from the customer-facing menu, but still in the full list
+	// for admin screens, and still resolvable by code.
+	available, err = ListAvailableMenuItems(ctx, db)
+	if err != nil {
+		t.Fatalf("ListAvailableMenuItems() error = %v", err)
+	}
+	if available != nil {
+		t.Fatalf("ListAvailableMenuItems() = %+v, want nil for a retired item", available)
+	}
+	all, err := ListMenuItems(ctx, db)
+	if err != nil {
+		t.Fatalf("ListMenuItems() error = %v", err)
+	}
+	if len(all) != 1 || all[0].IsAvailable != 0 {
+		t.Fatalf("ListMenuItems() = %+v, want the retired item still listed", all)
+	}
+
+	item, err := GetMenuItemByCode(ctx, db, "SAM")
+	if err != nil {
+		t.Fatalf("GetMenuItemByCode() error = %v", err)
+	}
+	if item.IsAvailable != 0 {
+		t.Fatalf("GetMenuItemByCode().IsAvailable = %d, want 0", item.IsAvailable)
+	}
+
+	// And a code-entered order still succeeds, priced from the menu as usual.
+	orderID, err := CreateOrder(ctx, db, userID, []OrderLine{{Code: "SAM", Quantity: 2}})
+	if err != nil {
+		t.Fatalf("CreateOrder() on a retired item error = %v", err)
+	}
+	balance, err := GetUserBalancePaise(ctx, db, userID)
+	if err != nil {
+		t.Fatalf("GetUserBalancePaise() error = %v", err)
+	}
+	if balance != 10000-2*1500 {
+		t.Fatalf("balance = %d, want %d", balance, 10000-2*1500)
+	}
+
+	// Restoring availability brings it back with its price intact.
+	if err := SetMenuItemAvailability(ctx, db, menuID, 1); err != nil {
+		t.Fatalf("SetMenuItemAvailability() error = %v", err)
+	}
+	restored, err := ListAvailableMenuItems(ctx, db)
+	if err != nil {
+		t.Fatalf("ListAvailableMenuItems() error = %v", err)
+	}
+	if len(restored) != 1 || restored[0].PricePaise != 1500 {
+		t.Fatalf("ListAvailableMenuItems() after restore = %+v, want the item back at 1500", restored)
+	}
+
+	// And the order placed while it was retired is untouched.
+	items, err := ListOrderItems(ctx, db, orderID)
+	if err != nil {
+		t.Fatalf("ListOrderItems() error = %v", err)
+	}
+	if len(items) != 1 || items[0].UnitPricePaise != 1500 {
+		t.Fatalf("order items = %+v, want the retired-era order preserved", items)
 	}
 }
 

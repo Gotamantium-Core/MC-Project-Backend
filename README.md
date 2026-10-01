@@ -8,8 +8,8 @@ committed; the schema is embedded and created on first run.
 
 ```
 go run .                                        # creates ./food-kiosk.db
-go test ./...                                   # 50 tests
-go test ./... -coverprofile=cover.out           # ~84% of statements
+go test ./...                                   # 60 tests
+go test ./... -coverprofile=cover.out           # ~85% of statements
 CGO_ENABLED=1 go test -race ./...               # needs a C toolchain
 ```
 
@@ -36,6 +36,16 @@ item later never changes what a customer was charged.
 | `ErrConflict` | row exists but is in the wrong state for this change | 409 |
 | `ErrInsufficientBalance` | prepaid credit will not cover the order | 402 |
 
+`ErrConflict` covers three sources. Two are state checks in Go (completing an
+already cancelled order). The third is a schema constraint the caller could not
+have pre-empted, because it depends on rows they did not send: a `UNIQUE`
+violation such as a duplicate `users.roll_no` or `menu.code`, or a `FOREIGN KEY`
+restriction such as deleting a user who still has history. `asConflict`
+(`errors.go`) translates the driver's error into `ErrConflict` while keeping the
+original in the chain, so a duplicate is a 409 rather than an opaque 500. It
+only fires on a genuine constraint failure — a locked or unreadable database is
+returned untouched rather than dressed up as a conflict.
+
 **`DB` is an interface, not `*sql.DB`.** Both `*sql.DB` and `*sql.Tx` satisfy it,
 which is what lets the order helpers run inside a transaction. All read helpers
 take `DB`; only `CreateOrder` and `DeleteOrder` take a concrete `*sql.DB`,
@@ -47,8 +57,9 @@ commit atomically with the delete.
 ```
 users
   ├── id               [PK]
-  ├── roll_no          [UNIQUE] (TVE24CSXXX format)
-  ├── name
+  ├── roll_no          [UNIQUE] — the person's identifier, canonicalised
+  │                     (trimmed, upper-cased) and otherwise unconstrained
+  ├── name             [non-blank]
   ├── phone            (nullable)
   └── created_at
 
@@ -92,17 +103,44 @@ A user's **balance** is `SUM(credits) - SUM(debits)` over their transactions.
 ### Integrity rules worth knowing
 
 - **An ordered menu item cannot be deleted.** `order_items.menu_id` is
-  `ON DELETE RESTRICT`, so deleting an item that appears in any order fails.
-  Retire it with `SetMenuItemAvailability(ctx, db, id, 0)` instead — that hides
-  it from the kiosk while leaving history intact.
-- **A user with order history cannot be deleted** (`ON DELETE RESTRICT`).
-  `DeleteUser` surfaces this rather than forcing it. A top-up alone is enough to
-  block the delete, since the ledger is what the balance is computed from.
+  `ON DELETE RESTRICT`, so deleting an item that appears in any order fails with
+  `ErrConflict`. Retire it with `SetMenuItemAvailability(ctx, db, id, 0)`
+  instead — that hides it from the kiosk while leaving history intact, and is
+  reversible, so the item can come back when it returns.
+- **`is_available` is a display flag, not access control.** It removes an item
+  from `ListAvailableMenuItems` so the kiosk stops offering it, but
+  `CreateOrder` does **not** check it: someone who already has the code can still
+  order a retired item, and it is priced and recorded like any other. That is
+  deliberate — the flag exists to hide a sold-out item from the screen, not to
+  refuse a customer. `TestRetiredItemHidesButStaysOrderable` pins this; if you
+  want orders refused instead, filter on `is_available` in
+  `GetMenuItemsByCodes` and invert that test.
+- **A user with order history cannot be deleted** (`ON DELETE RESTRICT`), which
+  surfaces as `ErrConflict`. `DeleteUser` reports it rather than forcing it. A
+  top-up alone is enough to block the delete, since the ledger is what the
+  balance is computed from.
 - **`line_total_paise` is CHECK-constrained** to equal
   `unit_price_paise * quantity`, and `is_available` to `0` or `1`. These are the
   last line of defence if a future code path skips the Go validation.
 - **FK columns are indexed explicitly.** SQLite does not index them automatically
   the way MySQL does.
+
+### Before this is deployed
+
+Two naming decisions are cheap now and expensive later. Neither blocks work today,
+but both get materially harder once a real kiosk database exists, because a rename
+is a non-additive schema change that `CREATE TABLE IF NOT EXISTS` will not retrofit
+— it needs `user_version` bumped together with `schemaVersion`, plus a real
+migration for anything already in the field.
+
+- **`users.roll_no` is misnamed for what it now holds.** It is the unique
+  identifier for any person, and faculty identifiers are not roll numbers. A
+  neutral `identifier` (or `member_id`) would fit both. It touches the column, the
+  `User.RollNo` field, `GetUserByRollNo`, and every `roll_no` query.
+- **Upper-casing assumes a single case convention.** It is right for roll numbers
+  and probably for a faculty employee ID, but if an identifier system is genuinely
+  case-sensitive then normalising merges two real people into one account. The fix
+  is to drop the `ToUpper` and keep the trim.
 
 ### Order lifecycle
 
@@ -134,7 +172,7 @@ Note the current model: **`pending` means paid but not yet handed over.**
 should instead take payment at fulfilment, remove the debit from `CreateOrder`
 and split out a separate payment step.
 
-### Two SQLite settings that are easy to get wrong
+### Two SQLite settings worth mentioning
 
 Both live in the DSN built by `dsn()` in `db.go`, and both are load-bearing:
 
@@ -178,18 +216,47 @@ All files are in the `database` directory. All take a `context.Context` first.
 
 ### Users (users.go)
 
-- `CreateUser(ctx, db, rollNo, name, phone) (int64, error)`
+- `CreateUser(ctx, db, rollNo, name, phone) (int64, error)` — rejects a blank
+  roll number or name; a duplicate `rollNo` returns `ErrConflict`
 - `GetUserByID(ctx, db, id) (*User, error)`
-- `GetUserByRollNo(ctx, db, rollNo) (*User, error)` — `rollNo` is `TVE24CSXXX`
-- `UpdateUser(ctx, db, user User) error` — overwrites roll number, name, phone
-- `DeleteUser(ctx, db, id) error` — refuses while the user has any order or
-  ledger row (`ON DELETE RESTRICT`). There is no force-delete: anonymise by
-  blanking the name and phone and keeping the row, which preserves the ledger.
+- `GetUserByRollNo(ctx, db, rollNo) (*User, error)` — accepts the identifier in
+  any casing, with or without surrounding whitespace
+- `UpdateUser(ctx, db, user User) error` — overwrites roll number, name, phone.
+  Renaming onto a taken roll number returns `ErrConflict`
+- `DeleteUser(ctx, db, id) error` — refuses with `ErrConflict` while the user has
+  any order or ledger row (`ON DELETE RESTRICT`). There is no force-delete:
+  anonymise by blanking the name and phone and keeping the row, which preserves
+  the ledger.
 - `ListUsers(ctx, db) ([]User, error)`
+
+**`roll_no` is the person's unique identifier, and nothing more.** Its shape is
+deliberately not validated: the `TVE24CSXXX` form is a student convention, not a
+rule, and a hardcoded check would reject a real person rather than catch a typo.
+Faculty will need their own identifier, and uniqueness is the only property that
+has to hold for both. So the column holds whatever identifier the kiosk is given,
+and `users.roll_no` is a name that will need revisiting before anything is
+deployed — see below.
+
+What *is* enforced is that it is non-blank, and that it is **canonicalised**:
+`normalizeRollNo` trims surrounding whitespace and upper-cases the value, on
+every write and on the lookup. This is what makes `UNIQUE` mean one person per
+account. SQLite compares `TEXT` with `BINARY` collation, so without it
+`TVE24CS001`, `tve24cs001` and `TVE24CS001 ` are three distinct values that the
+index happily accepts — and a student who typed their roll number in the wrong
+case at the kiosk silently gets a second account with a zero balance, with their
+existing credit appearing to have vanished.
+
+Normalising in Go rather than with `COLLATE NOCASE` keeps this out of the schema,
+so `user_version` does not have to move and no kiosk needs a migration. It covers
+every write that goes through this package; it does **not** help rows written
+before this change or by hand, which would need a dedupe pass before uniqueness
+can be trusted. There is no deployed database yet, so there is nothing to dedupe
+today — but this is the thing to do first if that ever changes.
 
 ### Menu (menu.go)
 
 - `CreateMenuItem(ctx, db, itemName, code, pricePaise, isAvailable) (int64, error)`
+  — a duplicate `code` returns `ErrConflict`
 - `GetMenuItemByID(ctx, db, id) (*Menu, error)`
 - `GetMenuItemByCode(ctx, db, code) (*Menu, error)`
 - `GetMenuItemsByCodes(ctx, db, codes) (map[string]Menu, error)` — prices a whole
@@ -197,10 +264,11 @@ All files are in the `database` directory. All take a `context.Context` first.
   returns `ErrNotFound` listing any unknown code rather than silently dropping
   it, so a partially valid cart cannot become a partial order.
 - `UpdateMenuItem(ctx, db, item Menu) error` — full overwrite of name, code,
-  price, availability
+  price, availability. Renaming onto a taken code returns `ErrConflict`
 - `SetMenuItemAvailability(ctx, db, id, isAvailable) error` — partial update; use
-  this to retire an item rather than a read-modify-write
-- `DeleteMenuItem(ctx, db, id) error` — fails if the item appears in any order
+  this to retire an item rather than a read-modify-write. Reversible
+- `DeleteMenuItem(ctx, db, id) error` — returns `ErrConflict` if the item appears
+  in any order
 - `ListMenuItems(ctx, db) ([]Menu, error)` — everything, for admin screens
 - `ListAvailableMenuItems(ctx, db) ([]Menu, error)` — the customer-facing menu
 
@@ -289,7 +357,7 @@ arithmetic rather than by a limit on the price itself.
 
 ## Testing
 
-`go test ./...` — 50 tests, no external dependencies. Each test gets a throwaway
+`go test ./...` — 60 tests, no external dependencies. Each test gets a throwaway
 database in `t.TempDir()` via `openTestDB` (`testdb_test.go`); `seedUser` and
 `seedMenu` (`orders_test.go`) build the usual fixtures.
 
@@ -336,9 +404,43 @@ bug:
 - `TestDeleteOrderWithOverCreditedLedgerTakesNothingBack` — a hand-edited ledger
   that over-credited an order must not lead to a debit against the customer.
 - `TestDeleteUserWithHistoryIsRestricted` — either an order or a bare top-up is
-  enough to block the delete.
+  enough to block the delete, and it arrives as `ErrConflict`.
 
-Coverage is about 84% of statements. The uncovered remainder is almost entirely
+Constraint failures are the errors Go cannot pre-empt, so they are tested as
+sentinels rather than as "not nil":
+
+- `TestAsConflictMapsOnlyConstraintFailures` — the mapping itself, against a stub
+  error: `UNIQUE`, `FOREIGN KEY`, `CHECK`, `NOT NULL` and `PRIMARY KEY` become
+  `ErrConflict`, while `BUSY` and I/O errors are returned untouched so a locked
+  database is never reported as a conflict.
+- `TestAsConflictSurvivesWrapping` — the driver error is wrapped on its way out
+  of the helper, so the code check has to see through that layer.
+- `TestUpdateMenuItemOntoTakenCodeIsConflict` / `TestUpdateUserOntoTakenRollNoIsConflict`
+  — a rename cannot steal another row's unique identifier, and the rejected
+  rename must not partially apply.
+- `TestDeleteOrderedMenuItemIsConflict` — the order history is what makes the
+  delete illegal, so the refusal is a 409, not an unexpected failure.
+- `TestCreateUserRejectsBlankIdentity` — `NOT NULL` does not catch `"  "`, so
+  blank roll numbers and names are rejected explicitly, on create and on update.
+
+Identifier uniqueness, where SQLite's `BINARY` collation would otherwise let one
+person hold several accounts:
+
+- `TestRollNoIsNormalized` — messy input lands stored as `TVE24CS001`, every
+  casing of it finds the same row, and re-registering in any casing is
+  `ErrConflict` rather than a second account. Verified by mutation: make
+  `normalizeRollNo` return its input and all three normalisation tests fail.
+- `TestUpdateUserNormalizesRollNo` — `UpdateUser` is a full overwrite, so it is
+  the other way a differently-cased identifier could reach the table.
+- `TestRollNoLookupRejectsBlank` — a blank identifier is `ErrInvalidInput`, not
+  `ErrNotFound`, so a caller cannot mistake "you typed nothing" for "no such
+  student".
+
+`TestRetiredItemHidesButStaysOrderable` pins the availability contract described
+under Integrity rules: hidden from the customer menu, still orderable by code,
+still restorable with its price and history intact.
+
+Coverage is about 85% of statements. The uncovered remainder is almost entirely
 the driver-level error branches (`LastInsertId`, `RowsAffected`, query and scan
 failures), which need a mock `sql.DB` to reach, plus the arithmetic paths that
 are unreachable in practice (e.g. a negative `checkedAdd`, which no caller
