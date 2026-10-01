@@ -8,7 +8,8 @@ committed; the schema is embedded and created on first run.
 
 ```
 go run .                                        # creates ./food-kiosk.db
-go test ./...                                   # 32 tests
+go test ./...                                   # 50 tests
+go test ./... -coverprofile=cover.out           # ~84% of statements
 CGO_ENABLED=1 go test -race ./...               # needs a C toolchain
 ```
 
@@ -37,8 +38,9 @@ item later never changes what a customer was charged.
 
 **`DB` is an interface, not `*sql.DB`.** Both `*sql.DB` and `*sql.Tx` satisfy it,
 which is what lets the order helpers run inside a transaction. All read helpers
-take `DB`; only `CreateOrder` takes a concrete `*sql.DB`, because it needs to open
-a transaction.
+take `DB`; only `CreateOrder` and `DeleteOrder` take a concrete `*sql.DB`,
+because each needs to open a transaction — `DeleteOrder` because its refund must
+commit atomically with the delete.
 
 ## Database schema
 
@@ -94,6 +96,8 @@ A user's **balance** is `SUM(credits) - SUM(debits)` over their transactions.
   Retire it with `SetMenuItemAvailability(ctx, db, id, 0)` instead — that hides
   it from the kiosk while leaving history intact.
 - **A user with order history cannot be deleted** (`ON DELETE RESTRICT`).
+  `DeleteUser` surfaces this rather than forcing it. A top-up alone is enough to
+  block the delete, since the ledger is what the balance is computed from.
 - **`line_total_paise` is CHECK-constrained** to equal
   `unit_price_paise * quantity`, and `is_available` to `0` or `1`. These are the
   last line of defence if a future code path skips the Go validation.
@@ -111,6 +115,19 @@ pending ──CompleteOrder──> completed
 `cancelled` is terminal. Cancelling an order that was paid writes the matching
 `credit` in the same transaction, so the status and the balance can never
 disagree.
+
+```
+                     ┌──CancelOrder──> cancelled
+pending ─────────────┤
+                     └──CompleteOrder─> completed ──┐
+                                                    ├──DeleteOrder──> (gone)
+(cancelled) ─────────────────────────────────────────┘   refunds what is
+                                                        still outstanding
+```
+
+`DeleteOrder` sits outside the status machine: it accepts any state, purges the
+order, and nets the ledger so it cannot pay out twice. Prefer `CancelOrder` for
+ordinary mistakes — it keeps the order and its ledger visible.
 
 Note the current model: **`pending` means paid but not yet handed over.**
 `CreateOrder` debits the balance as part of the same atomic write. If the kiosk
@@ -165,6 +182,9 @@ All files are in the `database` directory. All take a `context.Context` first.
 - `GetUserByID(ctx, db, id) (*User, error)`
 - `GetUserByRollNo(ctx, db, rollNo) (*User, error)` — `rollNo` is `TVE24CSXXX`
 - `UpdateUser(ctx, db, user User) error` — overwrites roll number, name, phone
+- `DeleteUser(ctx, db, id) error` — refuses while the user has any order or
+  ledger row (`ON DELETE RESTRICT`). There is no force-delete: anonymise by
+  blanking the name and phone and keeping the row, which preserves the ledger.
 - `ListUsers(ctx, db) ([]User, error)`
 
 ### Menu (menu.go)
@@ -193,13 +213,48 @@ All files are in the `database` directory. All take a `context.Context` first.
 - `GetOrderByID(ctx, db, id) (*Order, error)` — the only order read that attaches
   `Items`; it also re-checks that the total matches the sum of the lines
 - `ListOrderItems(ctx, db, orderID) ([]OrderItem, error)`
+- `GetOrderItemByID(ctx, db, id) (*OrderItem, error)`
+- `ListOrderItemsByMenuItem(ctx, db, menuID) ([]OrderItem, error)` — every line
+  ever priced from one menu item, oldest first. Reads `idx_order_items_menu_id`
+  and answers "what has this sold in" without a table scan. It returns the
+  **snapshot**, so a repriced item still reports what customers were charged.
 - `ListOrdersByUser(ctx, db, userID) ([]Order, error)` — newest first, no items
 - `ListOrdersByStatus(ctx, db, status) ([]Order, error)` — the service queue
 - `CompleteOrder(ctx, db, orderID) error` — stamps `completed_at`
 - `CancelOrder(ctx, db, orderID) error` — refunds in the same transaction
+- `DeleteOrder(ctx, db, orderID) error` — **atomic, and requires a `*sql.DB`**,
+  not the `DB` interface, because the refund and the delete share one
+  transaction. Refunds only what the order still *owes*, then purges the order
+  and cascades its lines away. Prefer `CancelOrder` for ordinary mistakes; this
+  is for purging outright.
 
 The list helpers deliberately leave `Items` nil to avoid an N+1 query; call
-`GetOrderByID` for detail.
+`GetOrderByID` for detail. Every list helper returns `nil`, not an empty slice,
+when nothing matches.
+
+### `DeleteOrder` and the double-refund question
+
+Deleting a paid order would otherwise leave its debit in the ledger with
+`order_id` set to `NULL` — the customer's money gone with no order to show for
+it. So `DeleteOrder` credits back the **outstanding** amount (debits minus
+credits already written for that order) in the same transaction as the delete.
+Once it returns `nil` the balance is exactly what it was before the order
+existed.
+
+Netting rather than refunding the raw debit total is what makes it safe to call
+twice over a lifecycle:
+
+| Order state at delete | Outstanding | Refund written |
+| --- | --- | --- |
+| `pending` or `completed` | full total | full total |
+| `cancelled` (already refunded) | 0 | nothing — no second refund |
+| free cart (never charged) | 0 | nothing — the ledger rejects 0 anyway |
+| ledger hand-edited to over-credit | negative | nothing — never debit the customer to correct a bookkeeping mistake |
+
+The credit is written while `order_id` still resolves, so `ON DELETE SET NULL`
+detaches it and it survives as an ordinary refund on the balance. Order lines
+are immutable once written, so nothing ever needs re-pricing: the `DELETE`
+cascades them away.
 
 ### Balance and ledger (orders.go)
 
@@ -208,6 +263,16 @@ The list helpers deliberately leave `Items` nil to avoid an N+1 query; call
 - `GetUserBalancePaise(ctx, db, userID) (int64, error)` — credits minus debits.
   May be negative if the ledger was overridden by hand; treat that as no credit.
 - `ListTransactionsByUser(ctx, db, userID) ([]Transaction, error)` — newest first
+- `ListTransactionsByOrder(ctx, db, orderID) ([]Transaction, error)` — oldest
+  first; the debit and any refund, which is how you check that an order settled
+  correctly. Reads `idx_transactions_order_id`.
+- `ListTransactions(ctx, db) ([]Transaction, error)` — the whole ledger across
+  all users, newest first. Unbounded on purpose: silently truncating an audit
+  trail is worse than a long slice.
+- `GetTransactionByID(ctx, db, id) (*Transaction, error)`
+
+A transaction with `order_id` NULL is a top-up and belongs to no order, so
+`ListTransactionsByOrder` does not return it.
 
 ### Input limits
 
@@ -216,10 +281,17 @@ a quantity above `maxQuantityPerLine` (100), or more than `maxLinesPerOrder`
 (50) lines. Line totals and the order total are computed with overflow-checked
 arithmetic.
 
+Duplicate codes are merged before any of that is checked, so the 100 cap applies
+to the **combined** quantity for a code, not to each line: 60 + 60 of the same
+item is rejected even though neither line is over the cap on its own. A price is
+only constrained to `>= 0`, so an absurd menu price is caught by the checked
+arithmetic rather than by a limit on the price itself.
+
 ## Testing
 
-`go test ./...` — 32 tests, no external dependencies. Each test gets a throwaway
-database in `t.TempDir()` via `openTestDB` (`testdb_test.go`).
+`go test ./...` — 50 tests, no external dependencies. Each test gets a throwaway
+database in `t.TempDir()` via `openTestDB` (`testdb_test.go`); `seedUser` and
+`seedMenu` (`orders_test.go`) build the usual fixtures.
 
 Tests worth knowing about, because they guard decisions that are easy to undo by
 accident:
@@ -237,5 +309,37 @@ accident:
   three; run with `-race` where a C toolchain is available.
 - `TestInitializeRejectsNewerSchema` — the `user_version` guard.
 
-Uncovered paths are the driver-level error branches (`LastInsertId`,
-`RowsAffected`, scan failures), which need a mock `sql.DB` to reach.
+The money arithmetic is where the subtle bugs would be, so it is tested from both
+ends:
+
+- `TestCreateOrderRejectsOverflowingTotals` — a legal-but-absurd price makes
+  `price * quantity`, or the sum across lines, exceed `int64`. Both must return
+  `ErrInvalidInput` and write nothing; wrapping would store a negative total.
+- `TestCreateOrderRejectsCombinedQuantityOverCap` — the 100-per-code cap applies
+  **after** duplicate codes merge, so 60 + 60 is rejected while 100 in one line
+  is accepted.
+- `TestGetOrderByIDRejectsTotalMismatch` — `orders.total_paise` cannot be
+  constrained against its own lines in SQL, so the test tampers with the total
+  and asserts the Go-side cross-check catches it.
+
+Deletion and refund accounting, where a double refund would be a real financial
+bug:
+
+- `TestDeleteOrderRefundsAndRemovesItems` — the core promise: money back, order
+  gone, ledger rows survive detached.
+- `TestDeleteCancelledOrderDoesNotRefundTwice` — cancelling already refunded, so
+  deleting afterwards must net to zero and write no fourth row.
+- `TestDeleteCompletedOrderRefunds` — a handed-over order that turned out wrong
+  still owes a refund.
+- `TestDeleteFreeOrderWritesNoLedgerRow` — nothing was charged, so nothing is
+  credited.
+- `TestDeleteOrderWithOverCreditedLedgerTakesNothingBack` — a hand-edited ledger
+  that over-credited an order must not lead to a debit against the customer.
+- `TestDeleteUserWithHistoryIsRestricted` — either an order or a bare top-up is
+  enough to block the delete.
+
+Coverage is about 84% of statements. The uncovered remainder is almost entirely
+the driver-level error branches (`LastInsertId`, `RowsAffected`, query and scan
+failures), which need a mock `sql.DB` to reach, plus the arithmetic paths that
+are unreachable in practice (e.g. a negative `checkedAdd`, which no caller
+passes).

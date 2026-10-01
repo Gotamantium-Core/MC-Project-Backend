@@ -89,6 +89,32 @@ func UpdateUser(ctx context.Context, db DB, user User) error {
 	return nil
 }
 
+// DeleteUser permanently removes a user.
+//
+// This fails with a foreign key error if the user has any orders or ledger
+// rows, because both orders.user_id and transactions.user_id are ON DELETE
+// RESTRICT. That is deliberate: the whole point of the prepaid balance is that
+// money movements stay attributable to a person, so a user who has ever
+// transacted cannot be erased. There is no force-delete here on purpose —
+// anonymising a user (blank the name and phone, keep the row) preserves the
+// ledger without losing the history that the balance depends on.
+func DeleteUser(ctx context.Context, db DB, id int64) error {
+	result, err := db.ExecContext(ctx, `DELETE FROM users WHERE id = ?`, id)
+	if err != nil {
+		return fmt.Errorf("delete user: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("check deleted user rows: %w", err)
+	}
+	if rowsAffected == 0 {
+		return fmt.Errorf("%w: user ID %d", ErrNotFound, id)
+	}
+
+	return nil
+}
+
 // returns a list of all users in the users table
 func ListUsers(ctx context.Context, db DB) ([]User, error) {
 	rows, err := db.QueryContext(ctx, `SELECT id, roll_no, name, phone, created_at FROM users ORDER BY id`)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"math"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -277,6 +278,112 @@ func TestCreateOrderValidation(t *testing.T) {
 	}
 	if len(orders) != 0 {
 		t.Fatalf("ListOrdersByUser() length = %d, want 0", len(orders))
+	}
+}
+
+// TestCreateOrderRejectsOverflowingTotals reaches the overflow-checked
+// arithmetic. A price near MaxInt64 is legal (the CHECK only requires >= 0), so
+// nothing stops a menu edit from making price * quantity or the running order
+// total exceed int64. Wrapping instead of erroring would write a negative total,
+// so these must come back as ErrInvalidInput with nothing written.
+func TestCreateOrderRejectsOverflowingTotals(t *testing.T) {
+	ctx := context.Background()
+	db := openTestDB(t)
+
+	userID := seedUser(t, db, "TVE24CS131", 0)
+
+	// price * quantity overflows on its own.
+	seedMenu(t, db, "Absurd Item", "HUGE", int64(math.MaxInt64))
+
+	// Two lines that are each fine on their own but overflow when summed: each is
+	// three quarters of MaxInt64, so the pair cannot fit.
+	threeQuarters := int64(math.MaxInt64) / 4 * 3
+	seedMenu(t, db, "Big A", "BIGA", threeQuarters)
+	seedMenu(t, db, "Big B", "BIGB", threeQuarters)
+
+	tests := []struct {
+		name  string
+		lines []OrderLine
+	}{
+		{name: "line total overflows", lines: []OrderLine{{Code: "HUGE", Quantity: 2}}},
+		{name: "order total overflows", lines: []OrderLine{{Code: "BIGA", Quantity: 1}, {Code: "BIGB", Quantity: 1}}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := CreateOrder(ctx, db, userID, tt.lines)
+			if !errors.Is(err, ErrInvalidInput) {
+				t.Fatalf("CreateOrder() error = %v, want ErrInvalidInput", err)
+			}
+		})
+	}
+
+	orders, err := ListOrdersByUser(ctx, db, userID)
+	if err != nil {
+		t.Fatalf("ListOrdersByUser() error = %v", err)
+	}
+	if orders != nil {
+		t.Fatalf("ListOrdersByUser() = %+v, want nil (no order may survive an overflow)", orders)
+	}
+}
+
+// TestCreateOrderRejectsCombinedQuantityOverCap covers the limit that only exists
+// once duplicate codes are merged: 60 + 60 of the same item is 120, which is over
+// the per-line cap even though neither line was on its own.
+func TestCreateOrderRejectsCombinedQuantityOverCap(t *testing.T) {
+	ctx := context.Background()
+	db := openTestDB(t)
+
+	seedMenu(t, db, "Vada", "VADA", 3000)
+	// Enough credit for the full cap in one line (100 * 3000).
+	userID := seedUser(t, db, "TVE24CS132", 1000000)
+
+	half := int64(maxQuantityPerLine/2 + 1)
+	_, err := CreateOrder(ctx, db, userID, []OrderLine{
+		{Code: "VADA", Quantity: half},
+		{Code: "VADA", Quantity: half},
+	})
+	if !errors.Is(err, ErrInvalidInput) {
+		t.Fatalf("CreateOrder() error = %v, want ErrInvalidInput", err)
+	}
+	if !strings.Contains(err.Error(), "combined quantity") {
+		t.Fatalf("CreateOrder() error = %v, want a combined quantity message", err)
+	}
+
+	// The same total in a single line is fine, which is what makes this a merge
+	// limit rather than a blanket quantity check.
+	if _, err := CreateOrder(ctx, db, userID, []OrderLine{{Code: "VADA", Quantity: maxQuantityPerLine}}); err != nil {
+		t.Fatalf("CreateOrder() at exactly the cap error = %v, want nil", err)
+	}
+}
+
+// TestGetOrderByIDRejectsTotalMismatch covers the cross-row check in GetOrderByID.
+// orders.total_paise cannot be constrained against its own lines by SQL, so a
+// hand-edited or buggy writer could leave a total that disagrees with what the
+// items add up to. Reporting that order as if it were valid would misreport what
+// the customer was charged.
+func TestGetOrderByIDRejectsTotalMismatch(t *testing.T) {
+	ctx := context.Background()
+	db := openTestDB(t)
+
+	seedMenu(t, db, "Vada", "VADA", 3000)
+	userID := seedUser(t, db, "TVE24CS133", 10000)
+
+	orderID, err := CreateOrder(ctx, db, userID, []OrderLine{{Code: "VADA", Quantity: 1}})
+	if err != nil {
+		t.Fatalf("CreateOrder() error = %v", err)
+	}
+
+	// The orders table only checks total_paise >= 0, so this edit is accepted by
+	// the schema; only Go notices the disagreement.
+	if _, err := db.ExecContext(ctx, `UPDATE orders SET total_paise = total_paise + 100 WHERE id = ?`, orderID); err != nil {
+		t.Fatalf("tamper with order total: %v", err)
+	}
+
+	if _, err := GetOrderByID(ctx, db, orderID); err == nil {
+		t.Fatal("GetOrderByID() returned an order whose total does not match its lines")
+	} else if !strings.Contains(err.Error(), "does not match line sum") {
+		t.Fatalf("GetOrderByID() error = %v, want a total mismatch message", err)
 	}
 }
 
@@ -720,5 +827,237 @@ func TestInitializeRejectsNewerSchema(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "newer than supported") {
 		t.Fatalf("Initialize() error = %v, want a schema version message", err)
+	}
+}
+
+// TestDeleteOrderRefundsAndRemovesItems is the core promise of DeleteOrder:
+// once it returns nil the customer has their money back and the order is gone.
+func TestDeleteOrderRefundsAndRemovesItems(t *testing.T) {
+	ctx := context.Background()
+	db := openTestDB(t)
+
+	seedMenu(t, db, "Vada", "VADA", 3000)
+	userID := seedUser(t, db, "TVE24CS115", 10000)
+
+	orderID, err := CreateOrder(ctx, db, userID, []OrderLine{{Code: "VADA", Quantity: 2}})
+	if err != nil {
+		t.Fatalf("CreateOrder() error = %v", err)
+	}
+
+	if err := DeleteOrder(ctx, db, orderID); err != nil {
+		t.Fatalf("DeleteOrder() error = %v", err)
+	}
+
+	if _, err := GetOrderByID(ctx, db, orderID); !errors.Is(err, ErrNotFound) {
+		t.Fatalf("GetOrderByID() after delete error = %v, want ErrNotFound", err)
+	}
+
+	// The lines go with the order, via ON DELETE CASCADE.
+	items, err := ListOrderItems(ctx, db, orderID)
+	if err != nil {
+		t.Fatalf("ListOrderItems() error = %v", err)
+	}
+	if items != nil {
+		t.Fatalf("ListOrderItems() after delete = %+v, want nil", items)
+	}
+
+	// Nobody may be left out of pocket for an order that no longer exists.
+	balance, err := GetUserBalancePaise(ctx, db, userID)
+	if err != nil {
+		t.Fatalf("GetUserBalancePaise() error = %v", err)
+	}
+	if balance != 10000 {
+		t.Fatalf("balance = %d, want 10000 (the refund must land with the delete)", balance)
+	}
+
+	// The ledger outlives the purge: both the debit and its refund survive,
+	// detached from the order they belonged to.
+	txns, err := ListTransactionsByUser(ctx, db, userID)
+	if err != nil {
+		t.Fatalf("ListTransactionsByUser() error = %v", err)
+	}
+	if len(txns) != 3 {
+		t.Fatalf("transactions length = %d, want 3 (top-up, debit, refund)", len(txns))
+	}
+	if txns[0].TransactionType != TransactionTypeCredit || txns[0].AmountPaise != 6000 {
+		t.Fatalf("newest transaction = %+v, want credit 6000", txns[0])
+	}
+	if txns[0].OrderID != nil {
+		t.Fatalf("refund order_id = %d, want nil after the order row is deleted", *txns[0].OrderID)
+	}
+}
+
+// TestDeleteCancelledOrderDoesNotRefundTwice is the test that has to exist.
+//
+// Cancelling already refunded the order, so deleting it afterwards must notice
+// the balance is settled. Refunding the raw debit total a second time would pay
+// the customer back twice for an order they never received.
+func TestDeleteCancelledOrderDoesNotRefundTwice(t *testing.T) {
+	ctx := context.Background()
+	db := openTestDB(t)
+
+	seedMenu(t, db, "Vada", "VADA", 3000)
+	userID := seedUser(t, db, "TVE24CS116", 10000)
+
+	orderID, err := CreateOrder(ctx, db, userID, []OrderLine{{Code: "VADA", Quantity: 2}})
+	if err != nil {
+		t.Fatalf("CreateOrder() error = %v", err)
+	}
+	if err := CancelOrder(ctx, db, orderID); err != nil {
+		t.Fatalf("CancelOrder() error = %v", err)
+	}
+
+	if err := DeleteOrder(ctx, db, orderID); err != nil {
+		t.Fatalf("DeleteOrder() error = %v", err)
+	}
+
+	// Still exactly the top-up, the debit and the one refund. A fourth row would
+	// be a double refund.
+	txns, err := ListTransactionsByUser(ctx, db, userID)
+	if err != nil {
+		t.Fatalf("ListTransactionsByUser() error = %v", err)
+	}
+	if len(txns) != 3 {
+		t.Fatalf("transactions length = %d, want 3 (top-up, debit, single refund)", len(txns))
+	}
+
+	balance, err := GetUserBalancePaise(ctx, db, userID)
+	if err != nil {
+		t.Fatalf("GetUserBalancePaise() error = %v", err)
+	}
+	if balance != 10000 {
+		t.Fatalf("balance = %d, want 10000 (already refunded once, must not credit again)", balance)
+	}
+}
+
+// TestDeleteCompletedOrderRefunds covers the state an operator is most likely
+// to purge: an order that was handed over and then turned out to be wrong.
+func TestDeleteCompletedOrderRefunds(t *testing.T) {
+	ctx := context.Background()
+	db := openTestDB(t)
+
+	seedMenu(t, db, "Vada", "VADA", 3000)
+	userID := seedUser(t, db, "TVE24CS117", 10000)
+
+	orderID, err := CreateOrder(ctx, db, userID, []OrderLine{{Code: "VADA", Quantity: 1}})
+	if err != nil {
+		t.Fatalf("CreateOrder() error = %v", err)
+	}
+	if err := CompleteOrder(ctx, db, orderID); err != nil {
+		t.Fatalf("CompleteOrder() error = %v", err)
+	}
+
+	if err := DeleteOrder(ctx, db, orderID); err != nil {
+		t.Fatalf("DeleteOrder() error = %v", err)
+	}
+
+	balance, err := GetUserBalancePaise(ctx, db, userID)
+	if err != nil {
+		t.Fatalf("GetUserBalancePaise() error = %v", err)
+	}
+	if balance != 10000 {
+		t.Fatalf("balance = %d, want 10000 (a completed order still owes a refund)", balance)
+	}
+}
+
+// TestDeleteFreeOrderWritesNoLedgerRow guards the zero-value case. A cart of
+// free items never wrote a debit, so there is nothing to give back and the
+// ledger must not gain a credit either.
+func TestDeleteFreeOrderWritesNoLedgerRow(t *testing.T) {
+	ctx := context.Background()
+	db := openTestDB(t)
+
+	seedMenu(t, db, "Water", "WATER", 0)
+	userID := seedUser(t, db, "TVE24CS118", 10000)
+
+	orderID, err := CreateOrder(ctx, db, userID, []OrderLine{{Code: "WATER", Quantity: 1}})
+	if err != nil {
+		t.Fatalf("CreateOrder() error = %v", err)
+	}
+
+	if err := DeleteOrder(ctx, db, orderID); err != nil {
+		t.Fatalf("DeleteOrder() error = %v", err)
+	}
+
+	txns, err := ListTransactionsByUser(ctx, db, userID)
+	if err != nil {
+		t.Fatalf("ListTransactionsByUser() error = %v", err)
+	}
+	if len(txns) != 1 {
+		t.Fatalf("transactions length = %d, want 1 (the top-up only)", len(txns))
+	}
+	if txns[0].TransactionType != TransactionTypeCredit || txns[0].AmountPaise != 10000 {
+		t.Fatalf("transaction = %+v, want the untouched top-up", txns[0])
+	}
+}
+
+// TestDeleteOrderWithOverCreditedLedgerTakesNothingBack covers the sign guard in
+// DeleteOrder. A ledger hand-edited so the order was credited more than it was
+// debited leaves a negative outstanding amount. There is nothing to refund, and
+// debiting the difference would take money away from a customer over an operator's
+// bookkeeping mistake.
+func TestDeleteOrderWithOverCreditedLedgerTakesNothingBack(t *testing.T) {
+	ctx := context.Background()
+	db := openTestDB(t)
+
+	seedMenu(t, db, "Vada", "VADA", 3000)
+	userID := seedUser(t, db, "TVE24CS134", 10000)
+
+	orderID, err := CreateOrder(ctx, db, userID, []OrderLine{{Code: "VADA", Quantity: 1}})
+	if err != nil {
+		t.Fatalf("CreateOrder() error = %v", err)
+	}
+
+	// An over-generous refund, written straight to the table. The transaction_type
+	// CHECK permits a credit, so only the arithmetic in DeleteOrder can catch it.
+	if _, err := db.ExecContext(ctx, `INSERT INTO transactions (user_id, order_id, amount_paise, transaction_type) VALUES (?, ?, 5000, 'credit')`, userID, orderID); err != nil {
+		t.Fatalf("insert surplus credit: %v", err)
+	}
+
+	if err := DeleteOrder(ctx, db, orderID); err != nil {
+		t.Fatalf("DeleteOrder() error = %v", err)
+	}
+
+	// Outstanding was 3000 - 5000 = -2000, so DeleteOrder must have written no
+	// refund at all.
+	balance, err := GetUserBalancePaise(ctx, db, userID)
+	if err != nil {
+		t.Fatalf("GetUserBalancePaise() error = %v", err)
+	}
+	if balance != 12000 {
+		t.Fatalf("balance = %d, want 12000 (10000 top-up - 3000 debit + 5000 credit)", balance)
+	}
+
+	if _, err := GetOrderByID(ctx, db, orderID); !errors.Is(err, ErrNotFound) {
+		t.Fatalf("GetOrderByID() after delete error = %v, want ErrNotFound", err)
+	}
+}
+
+func TestDeleteOrderErrors(t *testing.T) {
+	ctx := context.Background()
+	db := openTestDB(t)
+
+	if err := DeleteOrder(ctx, db, 999); !errors.Is(err, ErrNotFound) {
+		t.Fatalf("DeleteOrder() on a missing order error = %v, want ErrNotFound", err)
+	}
+
+	if err := DeleteOrder(ctx, nil, 1); !errors.Is(err, ErrInvalidInput) {
+		t.Fatalf("DeleteOrder() with a nil handle error = %v, want ErrInvalidInput", err)
+	}
+
+	// A *sql.Tx cannot open a nested transaction, and the refund has to live in
+	// the same one, so a tx handle is refused up front rather than half-applied.
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		t.Fatalf("BeginTx() error = %v", err)
+	}
+	defer tx.Rollback()
+
+	err = DeleteOrder(ctx, tx, 1)
+	if err == nil {
+		t.Fatal("DeleteOrder() with a tx handle returned nil, want a handle error")
+	}
+	if !strings.Contains(err.Error(), "requires a *sql.DB handle") {
+		t.Fatalf("DeleteOrder() with a tx handle error = %v, want a handle error", err)
 	}
 }
