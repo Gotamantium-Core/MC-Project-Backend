@@ -8,7 +8,7 @@ committed; the schema is embedded and created on first run.
 
 ```
 go run .                                        # creates ./food-kiosk.db
-go test ./...                                   # 60 tests
+go test ./...                                   # 117 tests (60 database + 57 server)
 go test ./... -coverprofile=cover.out           # ~85% of statements
 CGO_ENABLED=1 go test -race ./...               # needs a C toolchain
 ```
@@ -357,7 +357,7 @@ arithmetic rather than by a limit on the price itself.
 
 ## Testing
 
-`go test ./...` — 60 tests, no external dependencies. Each test gets a throwaway
+`go test ./...` — 117 tests, no external dependencies. Each test gets a throwaway
 database in `t.TempDir()` via `openTestDB` (`testdb_test.go`); `seedUser` and
 `seedMenu` (`orders_test.go`) build the usual fixtures.
 
@@ -445,3 +445,115 @@ the driver-level error branches (`LastInsertId`, `RowsAffected`, query and scan
 failures), which need a mock `sql.DB` to reach, plus the arithmetic paths that
 are unreachable in practice (e.g. a negative `checkedAdd`, which no caller
 passes).
+
+## HTTP server and auth
+
+The `server` package wraps the database layer in a JSON HTTP API. It is HTTP
+only — MQTT is a separate owner. `main.go` loads config, opens and initializes
+the database, and serves until `SIGINT`/`SIGTERM`, then shuts down gracefully.
+
+```
+go run .                          # listens on :8080, creates ./food-kiosk.db
+curl localhost:8080/healthz       # {"status":"ok"}
+```
+
+### Configuration (environment)
+
+| Variable | Default | Notes |
+| --- | --- | --- |
+| `ADDR` | `:8080` | listen address |
+| `DB_PATH` | `food-kiosk.db` | SQLite file |
+| `JWT_SECRET` | — | **required** unless `AUTH_REQUIRED=false`; min 16 bytes |
+| `JWT_TTL` | `24h` | token lifetime (Go duration) |
+| `AUTH_REQUIRED` | `true` | `false` disables token checks — curl/dev only |
+| `CORS_ORIGINS` | — | comma list; empty disables the CORS middleware |
+| `ADMIN_PRINCIPAL` | — | bootstraps an admin login on startup; set with `ADMIN_PASSWORD` |
+| `ADMIN_PASSWORD` | — | min 8 bytes; hashed and upserted on every start |
+| `LOGIN_MAX_ATTEMPTS` | `10` | per-principal login attempts per window; `0` disables |
+| `LOGIN_WINDOW` | `1m` | the limiter window (Go duration) |
+
+`JWT_SECRET` must come from the environment, never from a committed file. If
+`ADMIN_PRINCIPAL`/`ADMIN_PASSWORD` are set, an admin credential is created or
+re-hashed at startup, so rotating the password is an env change and a restart.
+
+### Routes
+
+| Method | Path | Auth | Body → Response |
+| --- | --- | --- | --- |
+| GET | `/healthz` | no | `{"status":"ok"}` |
+| POST | `/auth/login` | no | `{principal,password}` → `{token,role}` |
+| GET | `/auth/me` | yes | → `{id,roll_no,name,phone,role}` |
+| POST | `/users` | no | `{roll_no,name,phone,pin?}` → `{id}` |
+| POST | `/users/{id}/topup` | yes | `{amount_paise}` → `{balance_paise}` |
+| GET | `/wallet` | yes | → `{balance_paise}` (self; admin `?user_id=`) |
+| GET | `/menu` | yes | → `{items:[...]}` (available; admin `?all=1`) |
+| POST | `/menu` | admin | `{item_name,code,price_paise,is_available?}` → `{id}` |
+| PUT | `/menu/{id}` | admin | any of the above → 204 |
+| PATCH | `/menu/{id}/availability` | admin | `{is_available}` → 204 |
+| DELETE | `/menu/{id}` | admin | → 204; 409 if the item appears in an order |
+| POST | `/orders` | yes | `{lines:[{code,quantity}]}` → `{id,total_paise}` |
+| GET | `/orders` | yes | → `{orders:[...]}` (self; admin `?user_id=` or `?status=`) |
+| GET | `/orders/{id}` | yes | → order + `items` (owner or admin) |
+| POST | `/orders/{id}/cancel` | yes | → `{balance_paise}` |
+| GET | `/queue?lane=a\|kitchen\|ready` | yes | → `{head,depth,items:[ids]}` |
+
+A customer token binds the request to its own `users.id`; the `user_id` in the
+order body is ignored for a customer and only honored for an admin. With
+`AUTH_REQUIRED=false` the body `user_id` is trusted, and admin routes pass
+through, which is what makes the curl examples below work without a token.
+
+A login is throttled per principal (`LOGIN_MAX_ATTEMPTS` failures per
+`LOGIN_WINDOW`); exceeding it returns `429`. A successful login clears the
+counter, so a mistyped PIN does not lock a customer out once they get it right.
+
+`lane` is required. `a` is an all-`MEAL` cart (Counter A), `kitchen` is anything
+with a non-`MEAL` line, and `ready` reads the `ready_orders` table. Lane is
+derived at read time by joining `order_items → menu.code`, so renaming a code
+later re-attributes history; snapshot the lane on the order if that matters. An
+empty lane is `{"head":null,"depth":0,"items":[]}`.
+
+### Errors
+
+`database` sentinels map to status codes in `server/errors.go`:
+`ErrNotFound`→404, `ErrInvalidInput`→400, `ErrConflict`→409,
+`ErrInsufficientBalance`→402. Anything else is a 500 that does not leak the
+underlying message.
+
+### Auth model
+
+Passwords are bcrypt hashes in the additive `credentials` table
+(`principal, password_hash, role, user_id`); `principal` is canonicalised the
+same way as `users.roll_no` (trimmed, upper-cased). Tokens are JWT HS256 with
+`sub`, `role`, `uid`, `exp`; the signing algorithm is pinned to HMAC so a token
+cannot ask to be verified with `none`. Login returns the same 401 for an unknown
+principal and a wrong password.
+
+Admin is real now, not just a claim: the `ADMIN_PRINCIPAL`/`ADMIN_PASSWORD` env
+pair bootstraps a `role='admin'` credential, and menu writes plus the `?all=1`
+and `?user_id=` views are guarded by `requireRole`. The `ready_orders` table is
+additive so the MQTT bridge can mark an order ready whether it runs in this
+process or a separate one.
+
+### Curl walkthrough
+
+```
+# register (with a PIN so the account can log in)
+curl -s localhost:8080/users -d '{"roll_no":"22cs001","name":"Asha","phone":"900","pin":"4321"}'
+
+# log in and keep the token
+TOKEN=$(curl -s localhost:8080/auth/login -d '{"principal":"22cs001","password":"4321"}' | jq -r .token)
+
+# top up, then order
+curl -s localhost:8080/users/1/topup -H "Authorization: Bearer $TOKEN" -d '{"amount_paise":5000}'
+curl -s localhost:8080/orders    -H "Authorization: Bearer $TOKEN" -d '{"lines":[{"code":"MEAL","quantity":2}]}'
+
+# what is at Counter A, and behind it
+curl -s "localhost:8080/queue?lane=a"       -H "Authorization: Bearer $TOKEN"
+curl -s "localhost:8080/queue?lane=ready"   -H "Authorization: Bearer $TOKEN"
+
+# start the server with an admin login, then add a menu item
+#   ADMIN_PRINCIPAL=boss ADMIN_PASSWORD=changeme go run .
+ATOKEN=$(curl -s localhost:8080/auth/login -d '{"principal":"boss","password":"changeme"}' | jq -r .token)
+curl -s localhost:8080/menu -H "Authorization: Bearer $ATOKEN" -d '{"item_name":"Meal","code":"MEAL","price_paise":5000}'
+```
+

@@ -1,0 +1,24 @@
+our architecture is something like this:
+
+Each ESP32s has two buttons and one LCD display attached.
+
+They talk to the backend over the message broker and tx/rx events like "Button pressed" and "Counter update"
+
+Backend sends/responds to messages and updates DB.
+
+DB stores customer info, wallet data, etc.
+
+I've roughly split the project like this:
+
+- Hardware assembly and soldering
+- ESP32 programming
+- Message broker/MQTT bits
+- Backend server and auth
+- Backend DB
+- Frontend and UI
+- Reports and documentation
+
+sounds good?
+
+
+Im doing  the backend server and the auth section.
