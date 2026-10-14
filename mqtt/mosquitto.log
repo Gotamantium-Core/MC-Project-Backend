@@ -1,0 +1,589 @@
+1791946755: Info: running mosquitto as user: nik.
+1791946755: mosquitto version 2.1.2 starting
+1791946755: Config loaded from mqtt/mosquitto.conf.
+1791946755: Bridge support available.
+1791946755: Persistence support available.
+1791946755: TLS support available.
+1791946755: TLS-PSK support available.
+1791946755: Websockets support available.
+1791946755: Opening ipv4 listen socket on port 1883.
+1791946755: mosquitto version 2.1.2 running
+1791946755: New connection from 127.0.0.1:51984 on port 1883.
+1791946755: New client connected from 127.0.0.1:51984 as auto-94203A34-2609-BC26-5932-ADF6AF0CB2A3 (p4, c1, k60).
+1791946755: New connection from 127.0.0.1:51985 on port 1883.
+1791946755: New client connected from 127.0.0.1:51985 as auto-384C718B-05B7-9281-8C4D-E1167EE3E603 (p4, c1, k60).
+1791946755: New connection from 127.0.0.1:51986 on port 1883.
+1791946755: New client connected from 127.0.0.1:51986 as auto-5817270F-6157-1331-6236-F2F07C181EB2 (p4, c1, k60).
+1791946755: New connection from 127.0.0.1:51987 on port 1883.
+1791946755: New client connected from 127.0.0.1:51987 as auto-E674D509-7AC9-6368-28A1-EBB4E22FAF44 (p4, c1, k60).
+1791946755: New connection from 127.0.0.1:51988 on port 1883.
+1791946755: New client connected from 127.0.0.1:51988 as auto-049D5F52-56FD-165D-6119-A2531F44A547 (p4, c1, k60).
+1791946755: New connection from 127.0.0.1:51989 on port 1883.
+1791946755: New client connected from 127.0.0.1:51989 as auto-4D45404C-D3BA-1DAE-BE52-1E900D91F2B2 (p4, c1, k60).
+1791946755: New connection from 127.0.0.1:51990 on port 1883.
+1791946755: New client connected from 127.0.0.1:51990 as auto-FF0B3F37-BD38-E23C-B949-AA14CECEDE48 (p4, c1, k60).
+1791946755: New connection from 127.0.0.1:51991 on port 1883.
+1791946755: New client connected from 127.0.0.1:51991 as auto-57F4D940-2E1B-7BCA-DEBD-B46B9DDB156B (p4, c1, k60).
+1791946755: New connection from 127.0.0.1:51992 on port 1883.
+1791946755: New client connected from 127.0.0.1:51992 as auto-653B9EF2-D3DC-74FD-E9E2-B995C5C68318 (p4, c1, k60).
+1791946756: New connection from 127.0.0.1:51993 on port 1883.
+1791946756: New client connected from 127.0.0.1:51993 as auto-78C25718-327A-90CE-B17C-7334C14A4620 (p4, c1, k60).
+1791946756: New connection from 127.0.0.1:51994 on port 1883.
+1791946756: New client connected from 127.0.0.1:51994 as auto-F3DEE635-6FAD-BB8D-C7A0-A9A666A8F2DD (p4, c1, k60).
+1791946756: Client auto-F3DEE635-6FAD-BB8D-C7A0-A9A666A8F2DD [127.0.0.1:51994] disconnected.
+1791946763: New connection from 127.0.0.1:52003 on port 1883.
+1791946763: New client connected from 127.0.0.1:52003 as auto-26CDBCD3-FA9C-DB45-B1A4-9939A1FD6F00 (p4, c1, k60).
+1791946763: Client auto-26CDBCD3-FA9C-DB45-B1A4-9939A1FD6F00 [127.0.0.1:52003] disconnected.
+1791946763: Client auto-26CDBCD3-FA9C-DB45-B1A4-9939A1FD6F00 [127.0.0.1:52003] disconnected: connection closed by client.
+1791946763: New connection from 127.0.0.1:52004 on port 1883.
+1791946763: New client connected from 127.0.0.1:52004 as auto-14B39553-647A-50F5-F816-2A5F7AA1BE09 (p4, c1, k60).
+1791946763: Client auto-14B39553-647A-50F5-F816-2A5F7AA1BE09 [127.0.0.1:52004] disconnected.
+1791946763: Client auto-14B39553-647A-50F5-F816-2A5F7AA1BE09 [127.0.0.1:52004] disconnected: connection closed by client.
+1791946763: New connection from 127.0.0.1:52006 on port 1883.
+1791946763: New client connected from 127.0.0.1:52006 as auto-EC6D455C-FC59-51EA-531C-3929F72EF9A4 (p4, c1, k60).
+1791946763: Client auto-EC6D455C-FC59-51EA-531C-3929F72EF9A4 [127.0.0.1:52006] disconnected.
+1791946763: Client auto-EC6D455C-FC59-51EA-531C-3929F72EF9A4 [127.0.0.1:52006] disconnected: connection closed by client.
+1791946764: New connection from 127.0.0.1:52008 on port 1883.
+1791946764: New client connected from 127.0.0.1:52008 as tui-88720 (p4, c1, k30).
+1791946766: New connection from 127.0.0.1:52009 on port 1883.
+1791946766: New client connected from 127.0.0.1:52009 as auto-2FDC8CB2-F177-4E39-1A12-3A26BAEA9FD9 (p4, c1, k60).
+1791946766: Client auto-2FDC8CB2-F177-4E39-1A12-3A26BAEA9FD9 [127.0.0.1:52009] disconnected.
+1791946766: Client auto-2FDC8CB2-F177-4E39-1A12-3A26BAEA9FD9 [127.0.0.1:52009] disconnected: connection closed by client.
+1791946766: Client auto-FF0B3F37-BD38-E23C-B949-AA14CECEDE48 [127.0.0.1:51990] disconnected.
+1791946766: Client auto-FF0B3F37-BD38-E23C-B949-AA14CECEDE48 [127.0.0.1:51990] disconnected: connection closed by client.
+1791946766: Client auto-57F4D940-2E1B-7BCA-DEBD-B46B9DDB156B [127.0.0.1:51991] disconnected.
+1791946766: Client auto-57F4D940-2E1B-7BCA-DEBD-B46B9DDB156B [127.0.0.1:51991] disconnected: connection closed by client.
+1791946766: Client auto-384C718B-05B7-9281-8C4D-E1167EE3E603 [127.0.0.1:51985] disconnected.
+1791946766: Client auto-384C718B-05B7-9281-8C4D-E1167EE3E603 [127.0.0.1:51985] disconnected: connection closed by client.
+1791946766: Client auto-5817270F-6157-1331-6236-F2F07C181EB2 [127.0.0.1:51986] disconnected.
+1791946766: Client auto-5817270F-6157-1331-6236-F2F07C181EB2 [127.0.0.1:51986] disconnected: connection closed by client.
+1791946766: Client auto-653B9EF2-D3DC-74FD-E9E2-B995C5C68318 [127.0.0.1:51992] disconnected.
+1791946766: Client auto-653B9EF2-D3DC-74FD-E9E2-B995C5C68318 [127.0.0.1:51992] disconnected: connection closed by client.
+1791946766: New connection from 127.0.0.1:52010 on port 1883.
+1791946766: New connection from 127.0.0.1:52011 on port 1883.
+1791946766: New connection from 127.0.0.1:52012 on port 1883.
+1791946766: New connection from 127.0.0.1:52013 on port 1883.
+1791946766: New connection from 127.0.0.1:52014 on port 1883.
+1791946766: New client connected from 127.0.0.1:52010 as auto-43D45A3E-E141-411D-CE19-F7A88805B939 (p4, c1, k60).
+1791946766: Client auto-43D45A3E-E141-411D-CE19-F7A88805B939 [127.0.0.1:52010] disconnected: connection closed by client.
+1791946766: Client auto-43D45A3E-E141-411D-CE19-F7A88805B939 [127.0.0.1:52010] disconnected: connection closed by client.
+1791946766: New client connected from 127.0.0.1:52011 as auto-51B3D990-7D43-F281-98C8-744B87213E68 (p4, c1, k60).
+1791946766: Client auto-51B3D990-7D43-F281-98C8-744B87213E68 [127.0.0.1:52011] disconnected: connection closed by client.
+1791946766: Client auto-51B3D990-7D43-F281-98C8-744B87213E68 [127.0.0.1:52011] disconnected: connection closed by client.
+1791946766: New client connected from 127.0.0.1:52012 as auto-F0A4B127-00F0-2644-B5E6-3B61F0704978 (p4, c1, k60).
+1791946766: Client auto-F0A4B127-00F0-2644-B5E6-3B61F0704978 [127.0.0.1:52012] disconnected: connection closed by client.
+1791946766: Client auto-F0A4B127-00F0-2644-B5E6-3B61F0704978 [127.0.0.1:52012] disconnected: connection closed by client.
+1791946766: New client connected from 127.0.0.1:52013 as auto-768DCC14-3C37-C3AD-F374-2D343703E21B (p4, c1, k60).
+1791946766: Client auto-768DCC14-3C37-C3AD-F374-2D343703E21B [127.0.0.1:52013] disconnected: connection closed by client.
+1791946766: Client auto-768DCC14-3C37-C3AD-F374-2D343703E21B [127.0.0.1:52013] disconnected: connection closed by client.
+1791946766: New client connected from 127.0.0.1:52014 as auto-CF394A07-B44D-187F-F5F1-B93353DEF83A (p4, c1, k60).
+1791946766: Client auto-CF394A07-B44D-187F-F5F1-B93353DEF83A [127.0.0.1:52014] disconnected: connection closed by client.
+1791946766: Client auto-CF394A07-B44D-187F-F5F1-B93353DEF83A [127.0.0.1:52014] disconnected: connection closed by client.
+1791946767: New connection from 127.0.0.1:52015 on port 1883.
+1791946767: New client connected from 127.0.0.1:52015 as auto-F8031766-63D4-F82C-7B9E-C07E309BF6DE (p4, c1, k60).
+1791946767: Client auto-F8031766-63D4-F82C-7B9E-C07E309BF6DE [127.0.0.1:52015] disconnected.
+1791946767: Client auto-F8031766-63D4-F82C-7B9E-C07E309BF6DE [127.0.0.1:52015] disconnected: connection closed by client.
+1791946769: Client tui-88720 [127.0.0.1:52008] disconnected.
+1791946804: Client auto-78C25718-327A-90CE-B17C-7334C14A4620 [127.0.0.1:51993] disconnected.
+1791946804: Client auto-78C25718-327A-90CE-B17C-7334C14A4620 [127.0.0.1:51993] disconnected: connection closed by client.
+1791946804: Client auto-049D5F52-56FD-165D-6119-A2531F44A547 [127.0.0.1:51988] disconnected.
+1791946804: Client auto-049D5F52-56FD-165D-6119-A2531F44A547 [127.0.0.1:51988] disconnected: connection closed by client.
+1791946804: Client auto-94203A34-2609-BC26-5932-ADF6AF0CB2A3 [127.0.0.1:51984] disconnected.
+1791946804: Client auto-94203A34-2609-BC26-5932-ADF6AF0CB2A3 [127.0.0.1:51984] disconnected: connection closed by client.
+1791946804: Client auto-E674D509-7AC9-6368-28A1-EBB4E22FAF44 [127.0.0.1:51987] disconnected.
+1791946804: Client auto-E674D509-7AC9-6368-28A1-EBB4E22FAF44 [127.0.0.1:51987] disconnected: connection closed by client.
+1791946804: Client auto-4D45404C-D3BA-1DAE-BE52-1E900D91F2B2 [127.0.0.1:51989] disconnected.
+1791946804: Client auto-4D45404C-D3BA-1DAE-BE52-1E900D91F2B2 [127.0.0.1:51989] disconnected: connection closed by client.
+1791946814: New connection from 127.0.0.1:52027 on port 1883.
+1791946814: New client connected from 127.0.0.1:52027 as auto-C552995E-8B2B-4FB8-D69A-B824053CD182 (p4, c1, k60).
+1791946814: Client auto-C552995E-8B2B-4FB8-D69A-B824053CD182 [127.0.0.1:52027] disconnected.
+1791946814: Client auto-C552995E-8B2B-4FB8-D69A-B824053CD182 [127.0.0.1:52027] disconnected: connection closed by client.
+1791946814: New connection from 127.0.0.1:52028 on port 1883.
+1791946814: New client connected from 127.0.0.1:52028 as auto-6303E21C-7276-AB2A-E21E-460AC3385014 (p4, c1, k60).
+1791946814: Client auto-6303E21C-7276-AB2A-E21E-460AC3385014 [127.0.0.1:52028] disconnected.
+1791946814: Client auto-6303E21C-7276-AB2A-E21E-460AC3385014 [127.0.0.1:52028] disconnected: connection closed by client.
+1791946814: New connection from 127.0.0.1:52029 on port 1883.
+1791946814: New client connected from 127.0.0.1:52029 as auto-CDAF8718-CAED-5B9E-C04E-81B944F2A7D7 (p4, c1, k60).
+1791946814: Client auto-CDAF8718-CAED-5B9E-C04E-81B944F2A7D7 [127.0.0.1:52029] disconnected.
+1791946814: New connection from 127.0.0.1:52030 on port 1883.
+1791946814: New client connected from 127.0.0.1:52030 as tui-88868 (p4, c1, k30).
+1791946817: New connection from 127.0.0.1:52032 on port 1883.
+1791946817: New client connected from 127.0.0.1:52032 as auto-FB0D8F76-A155-B79D-D736-F478C4D41C73 (p4, c1, k60).
+1791946817: Client auto-FB0D8F76-A155-B79D-D736-F478C4D41C73 [127.0.0.1:52032] disconnected.
+1791946817: Client auto-FB0D8F76-A155-B79D-D736-F478C4D41C73 [127.0.0.1:52032] disconnected: connection closed by client.
+1791946818: New connection from 127.0.0.1:52033 on port 1883.
+1791946818: New client connected from 127.0.0.1:52033 as auto-7C7600CC-4889-363D-5692-D90CDCE5F8A6 (p4, c1, k60).
+1791946818: Client auto-7C7600CC-4889-363D-5692-D90CDCE5F8A6 [127.0.0.1:52033] disconnected.
+1791946818: Client auto-7C7600CC-4889-363D-5692-D90CDCE5F8A6 [127.0.0.1:52033] disconnected: connection closed by client.
+1791946822: Client tui-88868 [127.0.0.1:52030] disconnected.
+1791946822: Client tui-88868 [127.0.0.1:52030] disconnected: connection closed by client.
+1791946872: New connection from 127.0.0.1:52045 on port 1883.
+1791946872: New client connected from 127.0.0.1:52045 as auto-4A164E0D-AEB9-374D-CB28-4CD2F76995FD (p4, c1, k60).
+1791946872: Client auto-4A164E0D-AEB9-374D-CB28-4CD2F76995FD [127.0.0.1:52045] disconnected.
+1791946872: Client auto-4A164E0D-AEB9-374D-CB28-4CD2F76995FD [127.0.0.1:52045] disconnected: connection closed by client.
+1791946872: New connection from 127.0.0.1:52046 on port 1883.
+1791946872: New client connected from 127.0.0.1:52046 as auto-43C1CFE2-6F10-C0E5-5EE4-E3449EB1FC04 (p4, c1, k60).
+1791946872: Client auto-43C1CFE2-6F10-C0E5-5EE4-E3449EB1FC04 [127.0.0.1:52046] disconnected.
+1791946872: Client auto-43C1CFE2-6F10-C0E5-5EE4-E3449EB1FC04 [127.0.0.1:52046] disconnected: connection closed by client.
+1791946872: New connection from 127.0.0.1:52047 on port 1883.
+1791946872: New client connected from 127.0.0.1:52047 as auto-432731A3-429F-02B0-A3F1-50E209C15E9B (p4, c1, k60).
+1791946872: Client auto-432731A3-429F-02B0-A3F1-50E209C15E9B [127.0.0.1:52047] disconnected.
+1791946872: New connection from 127.0.0.1:52048 on port 1883.
+1791946872: New client connected from 127.0.0.1:52048 as tui-89055 (p4, c1, k30).
+1791946875: New connection from 127.0.0.1:52049 on port 1883.
+1791946875: New client connected from 127.0.0.1:52049 as auto-E40D5672-2410-FDF0-4B0C-E9553D7A7526 (p4, c1, k60).
+1791946875: Client auto-E40D5672-2410-FDF0-4B0C-E9553D7A7526 [127.0.0.1:52049] disconnected.
+1791946875: Client auto-E40D5672-2410-FDF0-4B0C-E9553D7A7526 [127.0.0.1:52049] disconnected: connection closed by client.
+1791946876: New connection from 127.0.0.1:52050 on port 1883.
+1791946876: New client connected from 127.0.0.1:52050 as auto-31DCF17B-54D5-D557-6F34-292910AACC26 (p4, c1, k60).
+1791946876: Client auto-31DCF17B-54D5-D557-6F34-292910AACC26 [127.0.0.1:52050] disconnected.
+1791946876: Client auto-31DCF17B-54D5-D557-6F34-292910AACC26 [127.0.0.1:52050] disconnected: connection closed by client.
+1791946880: Client tui-89055 [127.0.0.1:52048] disconnected.
+1791946880: Client tui-89055 [127.0.0.1:52048] disconnected: connection closed by client.
+1791946906: New connection from 127.0.0.1:52056 on port 1883.
+1791946906: New client connected from 127.0.0.1:52056 as auto-4A8A8E99-1964-4338-3508-17674E8AFC98 (p4, c1, k60).
+1791946906: Client auto-4A8A8E99-1964-4338-3508-17674E8AFC98 [127.0.0.1:52056] disconnected.
+1791946906: Client auto-4A8A8E99-1964-4338-3508-17674E8AFC98 [127.0.0.1:52056] disconnected: connection closed by client.
+1791946906: New connection from 127.0.0.1:52057 on port 1883.
+1791946906: New client connected from 127.0.0.1:52057 as auto-16A7AD89-DBD4-6D3D-1069-8324F6ED14D5 (p4, c1, k60).
+1791946906: Client auto-16A7AD89-DBD4-6D3D-1069-8324F6ED14D5 [127.0.0.1:52057] disconnected.
+1791946906: Client auto-16A7AD89-DBD4-6D3D-1069-8324F6ED14D5 [127.0.0.1:52057] disconnected: connection closed by client.
+1791946906: New connection from 127.0.0.1:52058 on port 1883.
+1791946906: New client connected from 127.0.0.1:52058 as auto-D6EE0640-6299-0F64-1D2F-DF66D882DC01 (p4, c1, k60).
+1791946906: Client auto-D6EE0640-6299-0F64-1D2F-DF66D882DC01 [127.0.0.1:52058] disconnected.
+1791946906: Client auto-D6EE0640-6299-0F64-1D2F-DF66D882DC01 [127.0.0.1:52058] disconnected: connection closed by client.
+1791946911: New connection from 127.0.0.1:52059 on port 1883.
+1791946911: New client connected from 127.0.0.1:52059 as tui-89157 (p4, c1, k30).
+1791946914: New connection from 127.0.0.1:52063 on port 1883.
+1791946914: New client connected from 127.0.0.1:52063 as auto-66037330-07C2-10A1-2F61-25590E9FCC41 (p4, c1, k60).
+1791946914: Client auto-66037330-07C2-10A1-2F61-25590E9FCC41 [127.0.0.1:52063] disconnected.
+1791946914: Client auto-66037330-07C2-10A1-2F61-25590E9FCC41 [127.0.0.1:52063] disconnected: connection closed by client.
+1791946915: New connection from 127.0.0.1:52064 on port 1883.
+1791946915: New client connected from 127.0.0.1:52064 as auto-5EA5AF1F-6491-B41E-5FA2-1F9229F3606D (p4, c1, k60).
+1791946915: Client auto-5EA5AF1F-6491-B41E-5FA2-1F9229F3606D [127.0.0.1:52064] disconnected.
+1791946915: Client auto-5EA5AF1F-6491-B41E-5FA2-1F9229F3606D [127.0.0.1:52064] disconnected: connection closed by client.
+1791946939: Client tui-89157 [127.0.0.1:52059] disconnected: connection closed by client.
+1791946939: Client tui-89157 [127.0.0.1:52059] disconnected: connection closed by client.
+1791946940: New connection from 127.0.0.1:52066 on port 1883.
+1791946940: New client connected from 127.0.0.1:52066 as auto-10A567E3-9464-B8F0-8E2E-69F5CBBDE7ED (p4, c1, k60).
+1791946940: Client auto-10A567E3-9464-B8F0-8E2E-69F5CBBDE7ED [127.0.0.1:52066] disconnected.
+1791946940: Client auto-10A567E3-9464-B8F0-8E2E-69F5CBBDE7ED [127.0.0.1:52066] disconnected: connection closed by client.
+1791946940: New connection from 127.0.0.1:52067 on port 1883.
+1791946940: New client connected from 127.0.0.1:52067 as auto-54762081-D04F-E3A3-826F-61715C6EC176 (p4, c1, k60).
+1791946940: Client auto-54762081-D04F-E3A3-826F-61715C6EC176 [127.0.0.1:52067] disconnected.
+1791946940: Client auto-54762081-D04F-E3A3-826F-61715C6EC176 [127.0.0.1:52067] disconnected: connection closed by client.
+1791946940: New connection from 127.0.0.1:52068 on port 1883.
+1791946941: New client connected from 127.0.0.1:52068 as auto-1B327C1C-3283-BB00-F269-F626618388F0 (p4, c1, k60).
+1791946941: Client auto-1B327C1C-3283-BB00-F269-F626618388F0 [127.0.0.1:52068] disconnected.
+1791946945: New connection from 127.0.0.1:52072 on port 1883.
+1791946945: New client connected from 127.0.0.1:52072 as tui-89256 (p4, c1, k30).
+1791946949: New connection from 127.0.0.1:52073 on port 1883.
+1791946949: New client connected from 127.0.0.1:52073 as auto-5DEF9306-55F9-C828-E7D3-B61C2F57138A (p4, c1, k60).
+1791946949: Client auto-5DEF9306-55F9-C828-E7D3-B61C2F57138A [127.0.0.1:52073] disconnected.
+1791946951: New connection from 127.0.0.1:52074 on port 1883.
+1791946951: New client connected from 127.0.0.1:52074 as auto-213E036C-59FF-8E6D-29B5-E72AAF455608 (p4, c1, k60).
+1791946951: Client auto-213E036C-59FF-8E6D-29B5-E72AAF455608 [127.0.0.1:52074] disconnected.
+1791946951: Client auto-213E036C-59FF-8E6D-29B5-E72AAF455608 [127.0.0.1:52074] disconnected: connection closed by client.
+1791946965: Client tui-89256 [127.0.0.1:52072] disconnected.
+1791946965: Client tui-89256 [127.0.0.1:52072] disconnected: connection closed by client.
+1791946978: New connection from 127.0.0.1:52083 on port 1883.
+1791946978: New client connected from 127.0.0.1:52083 as auto-30D6BF70-568D-7ADB-5BC0-95AE124D7AA3 (p4, c1, k60).
+1791946978: Client auto-30D6BF70-568D-7ADB-5BC0-95AE124D7AA3 [127.0.0.1:52083] disconnected.
+1791946978: Client auto-30D6BF70-568D-7ADB-5BC0-95AE124D7AA3 [127.0.0.1:52083] disconnected: connection closed by client.
+1791946978: New connection from 127.0.0.1:52084 on port 1883.
+1791946978: New client connected from 127.0.0.1:52084 as auto-A6EA79F4-F32F-3495-4158-DD290C82E2B7 (p4, c1, k60).
+1791946978: Client auto-A6EA79F4-F32F-3495-4158-DD290C82E2B7 [127.0.0.1:52084] disconnected.
+1791946978: Client auto-A6EA79F4-F32F-3495-4158-DD290C82E2B7 [127.0.0.1:52084] disconnected: connection closed by client.
+1791946978: New connection from 127.0.0.1:52085 on port 1883.
+1791946979: New client connected from 127.0.0.1:52085 as auto-D346F024-DF0F-678E-ABA3-3B0AEE4C52A3 (p4, c1, k60).
+1791946979: Client auto-D346F024-DF0F-678E-ABA3-3B0AEE4C52A3 [127.0.0.1:52085] disconnected.
+1791946979: Client auto-D346F024-DF0F-678E-ABA3-3B0AEE4C52A3 [127.0.0.1:52085] disconnected: connection closed by client.
+1791946979: New connection from 127.0.0.1:52086 on port 1883.
+1791946979: New client connected from 127.0.0.1:52086 as tui-89353 (p4, c1, k30).
+1791946979: Client tui-89353 [127.0.0.1:52086] disconnected.
+1791946992: New connection from 127.0.0.1:52092 on port 1883.
+1791946992: New client connected from 127.0.0.1:52092 as tui-89392 (p4, c1, k30).
+1791947000: New connection from 127.0.0.1:52093 on port 1883.
+1791947000: New client connected from 127.0.0.1:52093 as auto-261F4AFD-E8A0-C8BB-0F30-29D52DFB8A5A (p4, c1, k60).
+1791947000: Client auto-261F4AFD-E8A0-C8BB-0F30-29D52DFB8A5A [127.0.0.1:52093] disconnected.
+1791947000: Client auto-261F4AFD-E8A0-C8BB-0F30-29D52DFB8A5A [127.0.0.1:52093] disconnected: connection closed by client.
+1791947001: New connection from 127.0.0.1:52094 on port 1883.
+1791947001: New client connected from 127.0.0.1:52094 as auto-9C5D18E0-817A-ACC7-9361-62A93BC6D96E (p4, c1, k60).
+1791947001: Client auto-9C5D18E0-817A-ACC7-9361-62A93BC6D96E [127.0.0.1:52094] disconnected.
+1791947001: Client auto-9C5D18E0-817A-ACC7-9361-62A93BC6D96E [127.0.0.1:52094] disconnected: connection closed by client.
+1791947014: New connection from 127.0.0.1:52107 on port 1883.
+1791947014: New client connected from 127.0.0.1:52107 as auto-90275304-02FC-B3CC-E36E-74B20DEEDE12 (p4, c1, k60).
+1791947016: New connection from 127.0.0.1:52108 on port 1883.
+1791947016: New client connected from 127.0.0.1:52108 as auto-986F7D61-6B39-BB2A-4E57-1DAD3989C0DE (p4, c1, k60).
+1791947016: Client auto-986F7D61-6B39-BB2A-4E57-1DAD3989C0DE [127.0.0.1:52108] disconnected.
+1791947016: Client auto-986F7D61-6B39-BB2A-4E57-1DAD3989C0DE [127.0.0.1:52108] disconnected: connection closed by client.
+1791947022: Client auto-90275304-02FC-B3CC-E36E-74B20DEEDE12 [127.0.0.1:52107] disconnected.
+1791947022: Client auto-90275304-02FC-B3CC-E36E-74B20DEEDE12 [127.0.0.1:52107] disconnected: connection closed by client.
+1791947037: Client tui-89392 [127.0.0.1:52092] disconnected: connection closed by client.
+1791947037: Client tui-89392 [127.0.0.1:52092] disconnected: connection closed by client.
+1791947037: New connection from 127.0.0.1:52113 on port 1883.
+1791947037: New client connected from 127.0.0.1:52113 as pahotest (p4, c1, k30).
+1791947037: Client pahotest [127.0.0.1:52113] disconnected.
+1791947037: Client pahotest [127.0.0.1:52113] disconnected: connection closed by client.
+1791947048: New connection from 127.0.0.1:52115 on port 1883.
+1791947048: New client connected from 127.0.0.1:52115 as auto-618452A3-4855-0AB9-D288-2EA52ED39B17 (p4, c1, k60).
+1791947049: New connection from 127.0.0.1:52116 on port 1883.
+1791947049: New client connected from 127.0.0.1:52116 as auto-6F278504-6B7F-8CB8-D069-896991573EA4 (p4, c1, k60).
+1791947049: Client auto-6F278504-6B7F-8CB8-D069-896991573EA4 [127.0.0.1:52116] disconnected.
+1791947049: Client auto-6F278504-6B7F-8CB8-D069-896991573EA4 [127.0.0.1:52116] disconnected: connection closed by client.
+1791947054: Client auto-618452A3-4855-0AB9-D288-2EA52ED39B17 [127.0.0.1:52115] disconnected.
+1791947054: Client auto-618452A3-4855-0AB9-D288-2EA52ED39B17 [127.0.0.1:52115] disconnected: connection closed by client.
+1791947068: New connection from 127.0.0.1:52122 on port 1883.
+1791947068: New client connected from 127.0.0.1:52122 as rigrepro (p4, c1, k30).
+1791947068: Client rigrepro [127.0.0.1:52122] disconnected.
+1791947113: New connection from 127.0.0.1:52128 on port 1883.
+1791947113: New client connected from 127.0.0.1:52128 as rigrepro (p4, c1, k30).
+1791947113: Client rigrepro [127.0.0.1:52128] disconnected.
+1791947113: Client rigrepro [127.0.0.1:52128] disconnected: connection closed by client.
+1791947113: New connection from 127.0.0.1:52129 on port 1883.
+1791947113: New client connected from 127.0.0.1:52129 as pahotest (p4, c1, k30).
+1791947113: Client pahotest [127.0.0.1:52129] disconnected.
+1791947113: Client pahotest [127.0.0.1:52129] disconnected: connection closed by client.
+1791947132: New connection from 127.0.0.1:52134 on port 1883.
+1791947132: New client connected from 127.0.0.1:52134 as tui-89788 (p4, c1, k30).
+1791947137: New connection from 127.0.0.1:52135 on port 1883.
+1791947137: New client connected from 127.0.0.1:52135 as auto-7CEC1527-0B4C-411F-2134-3406E1B5B18B (p4, c1, k60).
+1791947137: Client auto-7CEC1527-0B4C-411F-2134-3406E1B5B18B [127.0.0.1:52135] disconnected.
+1791947137: Client auto-7CEC1527-0B4C-411F-2134-3406E1B5B18B [127.0.0.1:52135] disconnected: connection closed by client.
+1791947139: New connection from 127.0.0.1:52136 on port 1883.
+1791947139: New client connected from 127.0.0.1:52136 as auto-8622FE96-373C-D853-9DEB-6411ABA53380 (p4, c1, k60).
+1791947139: Client auto-8622FE96-373C-D853-9DEB-6411ABA53380 [127.0.0.1:52136] disconnected.
+1791947139: Client auto-8622FE96-373C-D853-9DEB-6411ABA53380 [127.0.0.1:52136] disconnected: connection closed by client.
+1791947166: Client tui-89788 [127.0.0.1:52134] disconnected: connection closed by client.
+1791947166: Client tui-89788 [127.0.0.1:52134] disconnected: connection closed by client.
+1791947168: New connection from 127.0.0.1:52141 on port 1883.
+1791947168: New client connected from 127.0.0.1:52141 as tui-89882 (p4, c1, k30).
+1791947175: New connection from 127.0.0.1:52142 on port 1883.
+1791947175: New client connected from 127.0.0.1:52142 as auto-DD3D44C9-557E-EA1A-48E1-DB9FA34A847F (p4, c1, k60).
+1791947175: Client auto-DD3D44C9-557E-EA1A-48E1-DB9FA34A847F [127.0.0.1:52142] disconnected.
+1791947175: Client auto-DD3D44C9-557E-EA1A-48E1-DB9FA34A847F [127.0.0.1:52142] disconnected: connection closed by client.
+1791947178: New connection from 127.0.0.1:52143 on port 1883.
+1791947178: New client connected from 127.0.0.1:52143 as auto-C83B5530-7D6D-1CA5-39EF-7BC87404F348 (p4, c1, k60).
+1791947178: Client auto-C83B5530-7D6D-1CA5-39EF-7BC87404F348 [127.0.0.1:52143] disconnected.
+1791947178: Client auto-C83B5530-7D6D-1CA5-39EF-7BC87404F348 [127.0.0.1:52143] disconnected: connection closed by client.
+1791947218: Client tui-89882 [127.0.0.1:52141] disconnected: connection closed by client.
+1791947218: Client tui-89882 [127.0.0.1:52141] disconnected: connection closed by client.
+1791947281: New connection from 127.0.0.1:52163 on port 1883.
+1791947281: New client connected from 127.0.0.1:52163 as auto-8A731BDD-65F1-C014-7604-ABD09E5EBE2C (p4, c1, k60).
+1791947281: Client auto-8A731BDD-65F1-C014-7604-ABD09E5EBE2C [127.0.0.1:52163] disconnected.
+1791947281: Client auto-8A731BDD-65F1-C014-7604-ABD09E5EBE2C [127.0.0.1:52163] disconnected: connection closed by client.
+1791947281: New connection from 127.0.0.1:52164 on port 1883.
+1791947281: New client connected from 127.0.0.1:52164 as auto-28DAAED1-D2C2-52A1-F22B-FD1A5469B6F9 (p4, c1, k60).
+1791947281: Client auto-28DAAED1-D2C2-52A1-F22B-FD1A5469B6F9 [127.0.0.1:52164] disconnected.
+1791947281: Client auto-28DAAED1-D2C2-52A1-F22B-FD1A5469B6F9 [127.0.0.1:52164] disconnected: connection closed by client.
+1791947281: New connection from 127.0.0.1:52165 on port 1883.
+1791947281: New client connected from 127.0.0.1:52165 as auto-09AE75FA-463A-811F-010B-6C28EFC9A705 (p4, c1, k60).
+1791947281: Client auto-09AE75FA-463A-811F-010B-6C28EFC9A705 [127.0.0.1:52165] disconnected.
+1791947281: Client auto-09AE75FA-463A-811F-010B-6C28EFC9A705 [127.0.0.1:52165] disconnected: connection closed by client.
+1791947281: New connection from 127.0.0.1:52166 on port 1883.
+1791947281: New client connected from 127.0.0.1:52166 as tui-90168 (p4, c1, k30).
+1791947284: New connection from 127.0.0.1:52167 on port 1883.
+1791947284: New client connected from 127.0.0.1:52167 as auto-22268A42-005E-DB30-004C-091E6A454C43 (p4, c1, k60).
+1791947284: Client auto-22268A42-005E-DB30-004C-091E6A454C43 [127.0.0.1:52167] disconnected.
+1791947284: Client auto-22268A42-005E-DB30-004C-091E6A454C43 [127.0.0.1:52167] disconnected: connection closed by client.
+1791947286: New connection from 127.0.0.1:52168 on port 1883.
+1791947286: New client connected from 127.0.0.1:52168 as auto-91FB2021-719B-5CE5-A85E-2A471A139455 (p4, c1, k60).
+1791947286: Client auto-91FB2021-719B-5CE5-A85E-2A471A139455 [127.0.0.1:52168] disconnected.
+1791947286: Client auto-91FB2021-719B-5CE5-A85E-2A471A139455 [127.0.0.1:52168] disconnected: connection closed by client.
+1791947290: New connection from 127.0.0.1:52169 on port 1883.
+1791947290: New client connected from 127.0.0.1:52169 as auto-A6C26D6D-6A22-F751-7584-4D1EE707CAA7 (p4, c1, k60).
+1791947290: Client auto-A6C26D6D-6A22-F751-7584-4D1EE707CAA7 [127.0.0.1:52169] disconnected.
+1791947290: Client auto-A6C26D6D-6A22-F751-7584-4D1EE707CAA7 [127.0.0.1:52169] disconnected: connection closed by client.
+1791947291: New connection from 127.0.0.1:52170 on port 1883.
+1791947291: New client connected from 127.0.0.1:52170 as auto-DB53D137-BFB2-5540-16DA-78EE8A8756DA (p4, c1, k60).
+1791947291: Client auto-DB53D137-BFB2-5540-16DA-78EE8A8756DA [127.0.0.1:52170] disconnected.
+1791947291: Client auto-DB53D137-BFB2-5540-16DA-78EE8A8756DA [127.0.0.1:52170] disconnected: connection closed by client.
+1791947291: New connection from 127.0.0.1:52171 on port 1883.
+1791947291: New client connected from 127.0.0.1:52171 as auto-2AA0260B-390C-B842-33AC-51E4894E7B8F (p4, c1, k60).
+1791947291: Client auto-2AA0260B-390C-B842-33AC-51E4894E7B8F [127.0.0.1:52171] disconnected.
+1791947291: Client auto-2AA0260B-390C-B842-33AC-51E4894E7B8F [127.0.0.1:52171] disconnected: connection closed by client.
+1791947292: New connection from 127.0.0.1:52172 on port 1883.
+1791947292: New client connected from 127.0.0.1:52172 as auto-DB25CE3A-A599-164D-FD85-EB6DDF6E7B32 (p4, c1, k60).
+1791947292: Client auto-DB25CE3A-A599-164D-FD85-EB6DDF6E7B32 [127.0.0.1:52172] disconnected.
+1791947292: Client auto-DB25CE3A-A599-164D-FD85-EB6DDF6E7B32 [127.0.0.1:52172] disconnected: connection closed by client.
+1791947292: New connection from 127.0.0.1:52173 on port 1883.
+1791947292: New client connected from 127.0.0.1:52173 as auto-D3FFE669-D6FF-5BB5-38B8-0221C4B4136A (p4, c1, k60).
+1791947292: Client auto-D3FFE669-D6FF-5BB5-38B8-0221C4B4136A [127.0.0.1:52173] disconnected.
+1791947292: Client auto-D3FFE669-D6FF-5BB5-38B8-0221C4B4136A [127.0.0.1:52173] disconnected: connection closed by client.
+1791947293: New connection from 127.0.0.1:52174 on port 1883.
+1791947293: New client connected from 127.0.0.1:52174 as auto-6594F5D5-5781-8AEA-9620-147091A99AFF (p4, c1, k60).
+1791947293: Client auto-6594F5D5-5781-8AEA-9620-147091A99AFF [127.0.0.1:52174] disconnected.
+1791947293: Client auto-6594F5D5-5781-8AEA-9620-147091A99AFF [127.0.0.1:52174] disconnected: connection closed by client.
+1791947300: Client tui-90168 [127.0.0.1:52166] disconnected: connection closed by client.
+1791947300: Client tui-90168 [127.0.0.1:52166] disconnected: connection closed by client.
+1791947337: New connection from 127.0.0.1:52187 on port 1883.
+1791947337: New client connected from 127.0.0.1:52187 as tui-90402 (p4, c1, k30).
+1791947362: Client tui-90402 [127.0.0.1:52187] disconnected: connection closed by client.
+1791947362: Client tui-90402 [127.0.0.1:52187] disconnected: connection closed by client.
+1791953470: New connection from 127.0.0.1:53289 on port 1883.
+1791953470: New client connected from 127.0.0.1:53289 as tui-92157 (p4, c1, k30).
+1791953523: Client tui-92157 [127.0.0.1:53289] disconnected: connection closed by client.
+1791953523: Client tui-92157 [127.0.0.1:53289] disconnected: connection closed by client.
+1791953593: New connection from 127.0.0.1:53378 on port 1883.
+1791953593: New client connected from 127.0.0.1:53378 as auto-2E3F0E71-6B87-3BCD-F29B-7FD9434C25D2 (p4, c1, k60).
+1791953596: New connection from 127.0.0.1:53379 on port 1883.
+1791953596: New client connected from 127.0.0.1:53379 as tui-92912 (p4, c1, k30).
+1791953649: Client tui-92912 [127.0.0.1:53379] disconnected: connection closed by client.
+1791953649: Client tui-92912 [127.0.0.1:53379] disconnected: connection closed by client.
+1791953650: New connection from 127.0.0.1:53388 on port 1883.
+1791953650: New client connected from 127.0.0.1:53388 as tui-93024 (p4, c1, k30).
+1791953651: Client auto-2E3F0E71-6B87-3BCD-F29B-7FD9434C25D2 [127.0.0.1:53378] disconnected.
+1791953651: Client auto-2E3F0E71-6B87-3BCD-F29B-7FD9434C25D2 [127.0.0.1:53378] disconnected: connection closed by client.
+1791953652: New connection from 127.0.0.1:53390 on port 1883.
+1791953652: New client connected from 127.0.0.1:53390 as auto-19237CD4-E0E7-087F-FF51-705529AF518B (p4, c1, k60).
+1791953668: Client auto-19237CD4-E0E7-087F-FF51-705529AF518B [127.0.0.1:53390] disconnected.
+1791953668: Client auto-19237CD4-E0E7-087F-FF51-705529AF518B [127.0.0.1:53390] disconnected: connection closed by client.
+1791953676: New connection from 127.0.0.1:53396 on port 1883.
+1791953676: New client connected from 127.0.0.1:53396 as auto-63C9196C-FD21-59F3-DD3C-E23EDD2F3A38 (p4, c1, k60).
+1791953681: New connection from 127.0.0.1:53398 on port 1883.
+1791953681: New client connected from 127.0.0.1:53398 as auto-BBDB4F7A-C7D6-5967-8F9D-44515371C9D3 (p4, c1, k60).
+1791953687: New connection from 127.0.0.1:53403 on port 1883.
+1791953687: New client connected from 127.0.0.1:53403 as auto-B3BF6A84-71B3-B738-333A-BFDF46EEF45D (p4, c1, k60).
+1791953688: Client tui-93024 [127.0.0.1:53388] disconnected: connection closed by client.
+1791953688: Client tui-93024 [127.0.0.1:53388] disconnected: connection closed by client.
+1791953689: New connection from 127.0.0.1:53404 on port 1883.
+1791953689: New client connected from 127.0.0.1:53404 as tui-93444 (p4, c1, k30).
+1791953716: Client tui-93444 [127.0.0.1:53404] disconnected.
+1791953717: Client auto-63C9196C-FD21-59F3-DD3C-E23EDD2F3A38 [127.0.0.1:53396] disconnected.
+1791953717: Client auto-63C9196C-FD21-59F3-DD3C-E23EDD2F3A38 [127.0.0.1:53396] disconnected: connection closed by client.
+1791953720: Client auto-B3BF6A84-71B3-B738-333A-BFDF46EEF45D [127.0.0.1:53403] disconnected.
+1791953720: Client auto-B3BF6A84-71B3-B738-333A-BFDF46EEF45D [127.0.0.1:53403] disconnected: connection closed by client.
+1791953723: New connection from 127.0.0.1:53409 on port 1883.
+1791953723: New client connected from 127.0.0.1:53409 as auto-40611F3D-C57E-24E9-70E5-1D301D73C21D (p4, c1, k60).
+1791953725: New connection from 127.0.0.1:53411 on port 1883.
+1791953725: New client connected from 127.0.0.1:53411 as auto-2EFE19F2-DEFD-6674-C250-99E880E298AD (p4, c1, k60).
+1791953728: New connection from 127.0.0.1:53412 on port 1883.
+1791953728: New client connected from 127.0.0.1:53412 as tui-93610 (p4, c1, k30).
+1791953745: Client auto-BBDB4F7A-C7D6-5967-8F9D-44515371C9D3 [127.0.0.1:53398] disconnected.
+1791953745: Client auto-BBDB4F7A-C7D6-5967-8F9D-44515371C9D3 [127.0.0.1:53398] disconnected: connection closed by client.
+1791953748: New connection from 127.0.0.1:53424 on port 1883.
+1791953748: New client connected from 127.0.0.1:53424 as auto-DFAD0D6C-0930-D986-5161-D2B154C0EA45 (p4, c1, k60).
+1791953812: Client tui-93610 [127.0.0.1:53412] disconnected: connection closed by client.
+1791953812: Client tui-93610 [127.0.0.1:53412] disconnected: connection closed by client.
+1791953813: Client auto-40611F3D-C57E-24E9-70E5-1D301D73C21D [127.0.0.1:53409] disconnected.
+1791953813: Client auto-40611F3D-C57E-24E9-70E5-1D301D73C21D [127.0.0.1:53409] disconnected: connection closed by client.
+1791953815: Client auto-DFAD0D6C-0930-D986-5161-D2B154C0EA45 [127.0.0.1:53424] disconnected.
+1791953815: Client auto-DFAD0D6C-0930-D986-5161-D2B154C0EA45 [127.0.0.1:53424] disconnected: connection closed by client.
+1791953816: Client auto-2EFE19F2-DEFD-6674-C250-99E880E298AD [127.0.0.1:53411] disconnected.
+1791953816: Client auto-2EFE19F2-DEFD-6674-C250-99E880E298AD [127.0.0.1:53411] disconnected: connection closed by client.
+1791953919: New connection from 127.0.0.1:53452 on port 1883.
+1791953919: New client connected from 127.0.0.1:53452 as tui-94535 (p4, c1, k30).
+1791953967: New connection from 127.0.0.1:53460 on port 1883.
+1791953967: New client connected from 127.0.0.1:53460 as auto-E2235F76-1687-A5EA-EB71-724D240AF82B (p4, c1, k60).
+1791953974: New connection from 127.0.0.1:53462 on port 1883.
+1791953974: New client connected from 127.0.0.1:53462 as auto-B924DF24-9B44-B063-64B0-F059798E4C15 (p4, c1, k60).
+1791953978: New connection from 127.0.0.1:53464 on port 1883.
+1791953978: New client connected from 127.0.0.1:53464 as auto-74D0DD39-63FA-3765-6727-B170DD0309E7 (p4, c1, k60).
+1791953992: Client tui-94535 [127.0.0.1:53452] disconnected.
+1791953992: Client tui-94535 [127.0.0.1:53452] disconnected: connection closed by client.
+1791953994: Client auto-E2235F76-1687-A5EA-EB71-724D240AF82B [127.0.0.1:53460] disconnected.
+1791953994: Client auto-E2235F76-1687-A5EA-EB71-724D240AF82B [127.0.0.1:53460] disconnected: connection closed by client.
+1791953995: Client auto-B924DF24-9B44-B063-64B0-F059798E4C15 [127.0.0.1:53462] disconnected.
+1791953995: Client auto-B924DF24-9B44-B063-64B0-F059798E4C15 [127.0.0.1:53462] disconnected: connection closed by client.
+1791953997: Client auto-74D0DD39-63FA-3765-6727-B170DD0309E7 [127.0.0.1:53464] disconnected.
+1791953997: Client auto-74D0DD39-63FA-3765-6727-B170DD0309E7 [127.0.0.1:53464] disconnected: connection closed by client.
+1791954000: New connection from 127.0.0.1:53469 on port 1883.
+1791954000: New client connected from 127.0.0.1:53469 as auto-C1BE2CE5-3725-5CC4-AFD2-88F286914C77 (p4, c1, k60).
+1791954001: New connection from 127.0.0.1:53471 on port 1883.
+1791954002: New client connected from 127.0.0.1:53471 as auto-12880478-05D8-39D8-7F89-51F254DD556F (p4, c1, k60).
+1791954004: New connection from 127.0.0.1:53473 on port 1883.
+1791954004: New client connected from 127.0.0.1:53473 as auto-2A3B6BD0-A3F5-E269-6E58-CE3A0D9D41B1 (p4, c1, k60).
+1791954008: New connection from 127.0.0.1:53474 on port 1883.
+1791954008: New client connected from 127.0.0.1:53474 as tui-94846 (p4, c1, k30).
+1791954043: Client auto-2A3B6BD0-A3F5-E269-6E58-CE3A0D9D41B1 [127.0.0.1:53473] disconnected.
+1791954043: Client auto-2A3B6BD0-A3F5-E269-6E58-CE3A0D9D41B1 [127.0.0.1:53473] disconnected: connection closed by client.
+1791954046: New connection from 127.0.0.1:53493 on port 1883.
+1791954046: New client connected from 127.0.0.1:53493 as auto-C051BBE1-0A72-82BD-FD31-77A984DBFB8A (p4, c1, k60).
+1791954046: Client auto-C051BBE1-0A72-82BD-FD31-77A984DBFB8A [127.0.0.1:53493] disconnected.
+1791954046: Client auto-C051BBE1-0A72-82BD-FD31-77A984DBFB8A [127.0.0.1:53493] disconnected: connection closed by client.
+1791954049: New connection from 127.0.0.1:53495 on port 1883.
+1791954049: New client connected from 127.0.0.1:53495 as auto-2B359223-4AB2-DAE3-01F6-DDAFE7DC9A3F (p4, c1, k60).
+1791954050: Client auto-C1BE2CE5-3725-5CC4-AFD2-88F286914C77 [127.0.0.1:53469] disconnected.
+1791954050: Client auto-C1BE2CE5-3725-5CC4-AFD2-88F286914C77 [127.0.0.1:53469] disconnected: connection closed by client.
+1791954055: New connection from 127.0.0.1:53497 on port 1883.
+1791954055: New client connected from 127.0.0.1:53497 as auto-499CA91E-A71E-C545-09FD-8AC86E3EB077 (p4, c1, k60).
+1791954055: Client auto-499CA91E-A71E-C545-09FD-8AC86E3EB077 [127.0.0.1:53497] disconnected.
+1791954055: Client auto-499CA91E-A71E-C545-09FD-8AC86E3EB077 [127.0.0.1:53497] disconnected: connection closed by client.
+1791954056: Client tui-94846 [127.0.0.1:53474] disconnected: connection closed by client.
+1791954056: Client tui-94846 [127.0.0.1:53474] disconnected: connection closed by client.
+1791954058: Client auto-12880478-05D8-39D8-7F89-51F254DD556F [127.0.0.1:53471] disconnected.
+1791954058: Client auto-12880478-05D8-39D8-7F89-51F254DD556F [127.0.0.1:53471] disconnected: connection closed by client.
+1791954059: Client auto-2B359223-4AB2-DAE3-01F6-DDAFE7DC9A3F [127.0.0.1:53495] disconnected.
+1791954059: Client auto-2B359223-4AB2-DAE3-01F6-DDAFE7DC9A3F [127.0.0.1:53495] disconnected: connection closed by client.
+1791954062: New connection from 127.0.0.1:53499 on port 1883.
+1791954062: New client connected from 127.0.0.1:53499 as auto-ACD8EAAA-3DB7-7A53-778A-D6C1DF611545 (p4, c1, k60).
+1791954064: New connection from 127.0.0.1:53501 on port 1883.
+1791954064: New client connected from 127.0.0.1:53501 as auto-974562C7-04E1-6081-0188-5BE027F7CAB5 (p4, c1, k60).
+1791954065: New connection from 127.0.0.1:53503 on port 1883.
+1791954065: New client connected from 127.0.0.1:53503 as auto-322F2915-CCA3-A61C-4A9C-4E0AA9546926 (p4, c1, k60).
+1791954067: New connection from 127.0.0.1:53504 on port 1883.
+1791954067: New client connected from 127.0.0.1:53504 as tui-95214 (p4, c1, k30).
+1791954123: New connection from 127.0.0.1:53517 on port 1883.
+1791954123: New client connected from 127.0.0.1:53517 as tui-95311 (p4, c1, k30).
+1791954126: New connection from 127.0.0.1:53518 on port 1883.
+1791954126: New client connected from 127.0.0.1:53518 as auto-785973EA-04F4-1C41-C3AC-E43D5F6AA2A4 (p4, c1, k60).
+1791954126: Client auto-785973EA-04F4-1C41-C3AC-E43D5F6AA2A4 [127.0.0.1:53518] disconnected.
+1791954126: Client auto-785973EA-04F4-1C41-C3AC-E43D5F6AA2A4 [127.0.0.1:53518] disconnected: connection closed by client.
+1791954126: New connection from 127.0.0.1:53519 on port 1883.
+1791954126: New client connected from 127.0.0.1:53519 as auto-3CA71D02-FF0E-FA2F-BD5C-98153BDF9715 (p4, c1, k60).
+1791954126: Client auto-3CA71D02-FF0E-FA2F-BD5C-98153BDF9715 [127.0.0.1:53519] disconnected.
+1791954126: Client auto-3CA71D02-FF0E-FA2F-BD5C-98153BDF9715 [127.0.0.1:53519] disconnected: connection closed by client.
+1791954126: New connection from 127.0.0.1:53520 on port 1883.
+1791954126: New client connected from 127.0.0.1:53520 as auto-C1DD9F68-4F71-68A7-0F26-65A2BC6C8BF3 (p4, c1, k60).
+1791954126: Client auto-C1DD9F68-4F71-68A7-0F26-65A2BC6C8BF3 [127.0.0.1:53520] disconnected.
+1791954126: Client auto-C1DD9F68-4F71-68A7-0F26-65A2BC6C8BF3 [127.0.0.1:53520] disconnected: connection closed by client.
+1791954126: Client tui-95311 [127.0.0.1:53517] disconnected: connection closed by client.
+1791954126: Client tui-95311 [127.0.0.1:53517] disconnected: connection closed by client.
+1791954126: Client tui-95214 [127.0.0.1:53504] disconnected: connection closed by client.
+1791954126: Client tui-95214 [127.0.0.1:53504] disconnected: connection closed by client.
+1791954134: New connection from 127.0.0.1:53525 on port 1883.
+1791954134: New client connected from 127.0.0.1:53525 as auto-A80339F6-F1C9-A61C-466E-5462AF2FCBC0 (p4, c1, k60).
+1791954134: Client auto-A80339F6-F1C9-A61C-466E-5462AF2FCBC0 [127.0.0.1:53525] disconnected.
+1791954134: Client auto-A80339F6-F1C9-A61C-466E-5462AF2FCBC0 [127.0.0.1:53525] disconnected: connection closed by client.
+1791954134: New connection from 127.0.0.1:53526 on port 1883.
+1791954134: New client connected from 127.0.0.1:53526 as auto-BEE02EFF-A4AD-9FC8-BF2B-16CF305D6901 (p4, c1, k60).
+1791954134: Client auto-BEE02EFF-A4AD-9FC8-BF2B-16CF305D6901 [127.0.0.1:53526] disconnected.
+1791954134: Client auto-BEE02EFF-A4AD-9FC8-BF2B-16CF305D6901 [127.0.0.1:53526] disconnected: connection closed by client.
+1791954134: New connection from 127.0.0.1:53527 on port 1883.
+1791954134: New client connected from 127.0.0.1:53527 as auto-85BDA795-F589-FE89-057C-A2CCC574E811 (p4, c1, k60).
+1791954134: Client auto-85BDA795-F589-FE89-057C-A2CCC574E811 [127.0.0.1:53527] disconnected.
+1791954134: Client auto-85BDA795-F589-FE89-057C-A2CCC574E811 [127.0.0.1:53527] disconnected: connection closed by client.
+1791954134: New connection from 127.0.0.1:53528 on port 1883.
+1791954134: New client connected from 127.0.0.1:53528 as tui-95387 (p4, c1, k30).
+1791954137: New connection from 127.0.0.1:53529 on port 1883.
+1791954137: New client connected from 127.0.0.1:53529 as auto-672EA62B-48E4-54BC-2558-7D031455F914 (p4, c1, k60).
+1791954137: Client auto-672EA62B-48E4-54BC-2558-7D031455F914 [127.0.0.1:53529] disconnected.
+1791954137: Client auto-672EA62B-48E4-54BC-2558-7D031455F914 [127.0.0.1:53529] disconnected: connection closed by client.
+1791954137: New connection from 127.0.0.1:53530 on port 1883.
+1791954137: New client connected from 127.0.0.1:53530 as auto-5733DEFA-14DF-58E9-E967-83BA280E5F63 (p4, c1, k60).
+1791954137: Client auto-5733DEFA-14DF-58E9-E967-83BA280E5F63 [127.0.0.1:53530] disconnected.
+1791954137: Client auto-5733DEFA-14DF-58E9-E967-83BA280E5F63 [127.0.0.1:53530] disconnected: connection closed by client.
+1791954137: New connection from 127.0.0.1:53531 on port 1883.
+1791954137: New client connected from 127.0.0.1:53531 as auto-EE1FC7E0-FF30-E01A-8480-601B28D8180F (p4, c1, k60).
+1791954137: Client auto-EE1FC7E0-FF30-E01A-8480-601B28D8180F [127.0.0.1:53531] disconnected.
+1791954137: Client auto-EE1FC7E0-FF30-E01A-8480-601B28D8180F [127.0.0.1:53531] disconnected: connection closed by client.
+1791954141: Client tui-95387 [127.0.0.1:53528] disconnected: connection closed by client.
+1791954141: Client tui-95387 [127.0.0.1:53528] disconnected: connection closed by client.
+1791954142: Client auto-ACD8EAAA-3DB7-7A53-778A-D6C1DF611545 [127.0.0.1:53499] disconnected.
+1791954142: Client auto-ACD8EAAA-3DB7-7A53-778A-D6C1DF611545 [127.0.0.1:53499] disconnected: connection closed by client.
+1791954143: Client auto-974562C7-04E1-6081-0188-5BE027F7CAB5 [127.0.0.1:53501] disconnected.
+1791954143: Client auto-974562C7-04E1-6081-0188-5BE027F7CAB5 [127.0.0.1:53501] disconnected: connection closed by client.
+1791954144: Client auto-322F2915-CCA3-A61C-4A9C-4E0AA9546926 [127.0.0.1:53503] disconnected.
+1791954144: Client auto-322F2915-CCA3-A61C-4A9C-4E0AA9546926 [127.0.0.1:53503] disconnected: connection closed by client.
+1791954168: New connection from 127.0.0.1:53538 on port 1883.
+1791954168: New client connected from 127.0.0.1:53538 as auto-87BFF134-DB13-5098-228A-589B9D21CF7F (p4, c1, k60).
+1791954171: New connection from 127.0.0.1:53540 on port 1883.
+1791954171: New client connected from 127.0.0.1:53540 as auto-3EDEB6E7-2C3A-C852-F5F6-8516BAA7F5B1 (p4, c1, k60).
+1791954173: New connection from 127.0.0.1:53542 on port 1883.
+1791954173: New client connected from 127.0.0.1:53542 as auto-959879D5-11F0-8BAF-ADD1-C2FC787ECDA2 (p4, c1, k60).
+1791954179: New connection from 127.0.0.1:53543 on port 1883.
+1791954179: New client connected from 127.0.0.1:53543 as tui-95787 (p4, c1, k30).
+1791954474: New connection from 10.129.75.40:56628 on port 1883.
+1791954474: New client connected from 10.129.75.40:56628 as counter-b-c5936314 (p4, c1, k15).
+1791954664: Client counter-b-c5936314 [10.129.75.40:56628] disconnected: exceeded timeout.
+1791954668: New connection from 10.129.75.40:59907 on port 1883.
+1791954668: New client connected from 10.129.75.40:59907 as counter-a-c5936314 (p4, c1, k15).
+1791954760: Client counter-a-c5936314 [10.129.75.40:59907] disconnected: exceeded timeout.
+1791954763: New connection from 10.129.75.127:64276 on port 1883.
+1791954763: New client connected from 10.129.75.127:64276 as counter-b-c7936314 (p4, c1, k15).
+1791954765: Client tui-95787 [127.0.0.1:53543] disconnected: connection closed by client.
+1791954765: Client tui-95787 [127.0.0.1:53543] disconnected: connection closed by client.
+1791954818: Client counter-b-c7936314 [10.129.75.127:64276] disconnected: exceeded timeout.
+1791954819: New connection from 10.129.75.127:64873 on port 1883.
+1791954819: New client connected from 10.129.75.127:64873 as counter-b-c7936314 (p4, c1, k15).
+1791954820: New connection from 127.0.0.1:53692 on port 1883.
+1791954820: New client connected from 127.0.0.1:53692 as tui-97124 (p4, c1, k30).
+1791954828: Client tui-97124 [127.0.0.1:53692] disconnected: connection closed by client.
+1791954828: Client tui-97124 [127.0.0.1:53692] disconnected: connection closed by client.
+1791954849: Client counter-b-c7936314 [10.129.75.127:64873] disconnected: exceeded timeout.
+1791954855: New connection from 10.129.75.72:64096 on port 1883.
+1791954855: New client connected from 10.129.75.72:64096 as counter-b-c5936314 (p4, c1, k15).
+1791954906: New connection from 127.0.0.1:53708 on port 1883.
+1791954906: New client connected from 127.0.0.1:53708 as tui-97401 (p4, c1, k30).
+1791954907: Client counter-b-c5936314 [10.129.75.72:64096] disconnected: connection closed by client.
+1791954907: Client counter-b-c5936314 [10.129.75.72:64096] disconnected: connection closed by client.
+1791954907: New connection from 10.129.75.72:56193 on port 1883.
+1791954907: New client connected from 10.129.75.72:56193 as kitchen-c5936314 (p4, c1, k15).
+1791954970: Client tui-97401 [127.0.0.1:53708] disconnected: connection closed by client.
+1791954970: Client tui-97401 [127.0.0.1:53708] disconnected: connection closed by client.
+1791955027: New connection from 10.129.75.127:51743 on port 1883.
+1791955027: New client connected from 10.129.75.127:51743 as counter-b-c7936314 (p4, c1, k15).
+1791955041: Client kitchen-c5936314 [10.129.75.72:56193] disconnected: exceeded timeout.
+1791955042: New connection from 10.129.75.72:56194 on port 1883.
+1791955042: New client connected from 10.129.75.72:56194 as kitchen-c5936314 (p4, c1, k15).
+1791955086: New connection from 10.129.75.40:64556 on port 1883.
+1791955086: New client connected from 10.129.75.40:64556 as counter-a-c5936314 (p4, c1, k15).
+1791955092: New connection from 127.0.0.1:53736 on port 1883.
+1791955092: New client connected from 127.0.0.1:53736 as tui-97639 (p4, c1, k30).
+1791955266: Client kitchen-c5936314 [10.129.75.72:56194] disconnected: exceeded timeout.
+1791955301: New connection from 10.129.75.72:60616 on port 1883.
+1791955301: New client connected from 10.129.75.72:60616 as kitchen-c5936314 (p4, c1, k15).
+1791955545: Client kitchen-c5936314 [10.129.75.72:60616] disconnected: exceeded timeout.
+1791955546: New connection from 10.129.75.72:60617 on port 1883.
+1791955546: New client connected from 10.129.75.72:60617 as kitchen-c5936314 (p4, c1, k15).
+1791955680: Client counter-b-c7936314 [10.129.75.127:51743] disconnected: exceeded timeout.
+1791955680: New connection from 10.129.75.127:51744 on port 1883.
+1791955680: New client connected from 10.129.75.127:51744 as counter-b-c7936314 (p4, c1, k15).
+1791955689: Client kitchen-c5936314 [10.129.75.72:60617] disconnected: exceeded timeout.
+1791955690: New connection from 10.129.75.72:60618 on port 1883.
+1791955690: New client connected from 10.129.75.72:60618 as kitchen-c5936314 (p4, c1, k15).
+1791955712: Client kitchen-c5936314 [10.129.75.72:60618] disconnected: exceeded timeout.
+1791955712: New connection from 10.129.75.72:60619 on port 1883.
+1791955712: New client connected from 10.129.75.72:60619 as kitchen-c5936314 (p4, c1, k15).
+1791955819: Client tui-97639 [127.0.0.1:53736] disconnected: connection closed by client.
+1791955819: Client tui-97639 [127.0.0.1:53736] disconnected: connection closed by client.
+1791955820: New connection from 127.0.0.1:53836 on port 1883.
+1791955820: New client connected from 127.0.0.1:53836 as tui-98318 (p4, c1, k30).
+1791958295: Client tui-98318 [127.0.0.1:53836] disconnected: connection closed by client.
+1791958295: Client tui-98318 [127.0.0.1:53836] disconnected: connection closed by client.
+1791958296: Client auto-87BFF134-DB13-5098-228A-589B9D21CF7F [127.0.0.1:53538] disconnected.
+1791958296: Client auto-87BFF134-DB13-5098-228A-589B9D21CF7F [127.0.0.1:53538] disconnected: connection closed by client.
+1791958297: Client auto-3EDEB6E7-2C3A-C852-F5F6-8516BAA7F5B1 [127.0.0.1:53540] disconnected.
+1791958297: Client auto-3EDEB6E7-2C3A-C852-F5F6-8516BAA7F5B1 [127.0.0.1:53540] disconnected: connection closed by client.
+1791958298: Client auto-959879D5-11F0-8BAF-ADD1-C2FC787ECDA2 [127.0.0.1:53542] disconnected.
+1791958298: Client auto-959879D5-11F0-8BAF-ADD1-C2FC787ECDA2 [127.0.0.1:53542] disconnected: connection closed by client.
+1791958304: Client counter-a-c5936314 [10.129.75.40:64556] disconnected: exceeded timeout.
+1791958305: New connection from 10.129.75.40:64557 on port 1883.
+1791958305: New client connected from 10.129.75.40:64557 as counter-a-c5936314 (p4, c1, k15).
+1791958321: Client counter-b-c7936314 [10.129.75.127:51744] disconnected: exceeded timeout.
+1791958321: New connection from 10.129.75.127:51745 on port 1883.
+1791958321: New client connected from 10.129.75.127:51745 as counter-b-c7936314 (p4, c1, k15).
+1791958364: Client kitchen-c5936314 [10.129.75.72:60619] disconnected: exceeded timeout.
+1791958365: New connection from 10.129.75.72:60620 on port 1883.
+1791958365: New client connected from 10.129.75.72:60620 as kitchen-c5936314 (p4, c1, k15).
+1791958433: Client counter-a-c5936314 [10.129.75.40:64557] disconnected: exceeded timeout.
+1791958436: New connection from 10.129.75.40:64558 on port 1883.
+1791958436: New client connected from 10.129.75.40:64558 as counter-a-c5936314 (p4, c1, k15).
+1791958505: Client counter-a-c5936314 [10.129.75.40:64558] disconnected: exceeded timeout.
+1791958505: New connection from 10.129.75.40:64559 on port 1883.
+1791958505: New client connected from 10.129.75.40:64559 as counter-a-c5936314 (p4, c1, k15).
+1791958509: Client counter-b-c7936314 [10.129.75.127:51745] disconnected: exceeded timeout.
+1791958509: New connection from 10.129.75.127:51746 on port 1883.
+1791958509: New client connected from 10.129.75.127:51746 as counter-b-c7936314 (p4, c1, k15).
+1791958539: Client counter-b-c7936314 [10.129.75.127:51746] disconnected: connection closed by client.
+1791958539: Client counter-b-c7936314 [10.129.75.127:51746] disconnected: connection closed by client.
+1791958539: New connection from 10.129.75.127:51747 on port 1883.
+1791958539: New client connected from 10.129.75.127:51747 as counter-b-c7936314 (p4, c1, k15).
+1791958573: Client counter-a-c5936314 [10.129.75.40:64559] disconnected: exceeded timeout.
+1791958576: New connection from 10.129.75.40:64560 on port 1883.
+1791958576: New client connected from 10.129.75.40:64560 as counter-a-c5936314 (p4, c1, k15).
+1791958592: Client counter-b-c7936314 [10.129.75.127:51747] disconnected: exceeded timeout.
+1791958596: New connection from 10.129.75.127:51748 on port 1883.
+1791958596: New client connected from 10.129.75.127:51748 as counter-b-c7936314 (p4, c1, k15).
+1791958619: Client counter-b-c7936314 [10.129.75.127:51748] disconnected: exceeded timeout.
+1791958619: New connection from 10.129.75.127:51749 on port 1883.
+1791958619: New client connected from 10.129.75.127:51749 as counter-b-c7936314 (p4, c1, k15).
+1791958883: Client kitchen-c5936314 [10.129.75.72:60620] disconnected: exceeded timeout.
+1791958883: New connection from 10.129.75.72:60621 on port 1883.
+1791958883: New client connected from 10.129.75.72:60621 as kitchen-c5936314 (p4, c1, k15).
+1791958925: Client kitchen-c5936314 [10.129.75.72:60621] disconnected: exceeded timeout.
+1791958925: New connection from 10.129.75.72:60622 on port 1883.
+1791958925: New client connected from 10.129.75.72:60622 as kitchen-c5936314 (p4, c1, k15).
+1791958943: Client counter-b-c7936314 [10.129.75.127:51749] disconnected: exceeded timeout.
+1791958943: New connection from 10.129.75.127:51750 on port 1883.
+1791958943: New client connected from 10.129.75.127:51750 as counter-b-c7936314 (p4, c1, k15).
