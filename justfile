@@ -8,6 +8,15 @@ a: (flash "ROLE_COUNTER_A")
 b: (flash "ROLE_COUNTER_B")
 kitchen: (flash "ROLE_KITCHEN")
 
+# build/test every Go module in the workspace
+build:
+    cd backend/food-kiosk && go build -o /dev/null ./...
+    cd mqtt/tui && go build -o /dev/null .
+
+test:
+    cd backend/food-kiosk && go test ./...
+    cd mqtt/tui && go test ./...
+
 [private]
 flash role:
     #!/bin/zsh
