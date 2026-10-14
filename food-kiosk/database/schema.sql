@@ -92,3 +92,40 @@ CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_menu_id ON order_items(menu_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_user_id ON transactions(user_id, id);
 CREATE INDEX IF NOT EXISTS idx_transactions_order_id ON transactions(order_id);
+
+--------------------------------------------------------------------------
+-- Backend server + auth additions. Additive only: CREATE TABLE IF NOT EXISTS
+-- re-runs on every Initialize, so these land on an existing database without a
+-- user_version bump and without a migration.
+--------------------------------------------------------------------------
+
+-- credentials backs the HTTP login. principal is a roll_no for a customer and
+-- a username for an admin; role distinguishes them so admin support is purely
+-- additive later (rows with role='admin', no schema change). user_id links a
+-- customer principal to the users row it authenticates as, and is NULL for a
+-- principal that is not a customer.
+CREATE TABLE IF NOT EXISTS credentials (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    principal     TEXT NOT NULL UNIQUE CHECK (length(trim(principal)) > 0),
+    password_hash TEXT NOT NULL,
+    role          TEXT NOT NULL DEFAULT 'customer'
+                  CHECK (role IN ('customer', 'admin')),
+    user_id       INTEGER,
+    created_at    TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ready_orders is the kitchen-to-pickup holding list. An order that the
+-- kitchen has packed but that nobody has collected yet stays status='pending'
+-- (the design rule: pending until physically handed over); its presence here
+-- is what marks it "ready". A row is removed when the order is completed or
+-- cancelled, and ON DELETE CASCADE cleans up when the order itself is purged.
+CREATE TABLE IF NOT EXISTS ready_orders (
+    order_id INTEGER PRIMARY KEY,
+    ready_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_credentials_user_id ON credentials(user_id);
