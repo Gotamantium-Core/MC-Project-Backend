@@ -16,13 +16,6 @@ import (
 	"food-kiosk/server"
 )
 
-func env(key, fallback string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return fallback
-}
-
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -54,8 +47,8 @@ func main() {
 		log.Fatal(err)
 	}
 	client, err := mqtt.New(ctx, mqtt.Config{
-		Broker:   env("MQTT_BROKER", "tcp://127.0.0.1:1883"),
-		ClientID: env("MQTT_CLIENT_ID", "canteen-backend"),
+		Broker:   server.Getenv("MQTT_BROKER", "tcp://127.0.0.1:1883"),
+		ClientID: server.Getenv("MQTT_CLIENT_ID", "canteen-backend"),
 		Username: os.Getenv("MQTT_USERNAME"), Password: os.Getenv("MQTT_PASSWORD"),
 	}, queues, log.Default())
 	if err != nil {

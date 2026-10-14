@@ -42,34 +42,34 @@ const minAdminPasswordLen = 8
 // defaults. JWT_SECRET is mandatory unless AUTH_REQUIRED=false, which exists
 // only so the routes can be exercised with curl during a demo.
 func LoadConfig() (Config, error) {
-	ttl, err := time.ParseDuration(getenv("JWT_TTL", "24h"))
+	ttl, err := time.ParseDuration(Getenv("JWT_TTL", "24h"))
 	if err != nil {
 		return Config{}, fmt.Errorf("parse JWT_TTL: %w", err)
 	}
 
-	authRequired, err := parseBool(getenv("AUTH_REQUIRED", "true"))
+	authRequired, err := parseBool(Getenv("AUTH_REQUIRED", "true"))
 	if err != nil {
 		return Config{}, fmt.Errorf("parse AUTH_REQUIRED: %w", err)
 	}
 
-	loginWindow, err := time.ParseDuration(getenv("LOGIN_WINDOW", "1m"))
+	loginWindow, err := time.ParseDuration(Getenv("LOGIN_WINDOW", "1m"))
 	if err != nil {
 		return Config{}, fmt.Errorf("parse LOGIN_WINDOW: %w", err)
 	}
 
-	loginMax, err := strconv.Atoi(getenv("LOGIN_MAX_ATTEMPTS", "10"))
+	loginMax, err := strconv.Atoi(Getenv("LOGIN_MAX_ATTEMPTS", "10"))
 	if err != nil || loginMax < 0 {
 		return Config{}, fmt.Errorf("LOGIN_MAX_ATTEMPTS must be a non-negative integer")
 	}
 
 	cfg := Config{
-		Addr:             getenv("ADDR", ":8080"),
-		DBPath:           getenv("DB_PATH", "food-kiosk.db"),
+		Addr:             Getenv("ADDR", ":8080"),
+		DBPath:           Getenv("DB_PATH", "food-kiosk.db"),
 		JWTSecret:        []byte(os.Getenv("JWT_SECRET")),
 		JWTTTL:           ttl,
 		AuthRequired:     authRequired,
 		CORSOrigins:      splitCSV(os.Getenv("CORS_ORIGINS")),
-		AdminPrincipal:   getenv("ADMIN_PRINCIPAL", ""),
+		AdminPrincipal:   Getenv("ADMIN_PRINCIPAL", ""),
 		AdminPassword:    os.Getenv("ADMIN_PASSWORD"),
 		LoginMaxAttempts: loginMax,
 		LoginWindow:      loginWindow,
@@ -94,7 +94,7 @@ func LoadConfig() (Config, error) {
 	return cfg, nil
 }
 
-func getenv(key, fallback string) string {
+func Getenv(key, fallback string) string {
 	if v, ok := os.LookupEnv(key); ok && v != "" {
 		return v
 	}

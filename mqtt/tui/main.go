@@ -11,7 +11,6 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 	"sync"
@@ -273,11 +272,7 @@ func (r *rig) onMessage(_ mqtt.Client, m mqtt.Message) {
 func main() {
 	host := flag.String("broker", "127.0.0.1", "MQTT broker host")
 	port := flag.Int("port", 1883, "MQTT broker port")
-	debug := flag.Bool("debug", false, "paho packet logging to stderr")
 	flag.Parse()
-	if *debug {
-		mqtt.DEBUG = log.New(os.Stderr, "[mqtt] ", 0)
-	}
 
 	r := &rig{
 		nextID: 105,
